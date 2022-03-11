@@ -89,6 +89,20 @@ namespace WPFCoreMVVM_EF.ViewModels
 
         }
 
+
+        public ICommand UpdateComboBoxPosition
+        {
+            get
+            {
+                return new LambdaCommand(OnUpdateComboBoxPositionExecuted, CanUpdateComboBoxPositionExecute);
+            }
+        }
+        private bool CanUpdateComboBoxPositionExecute(object p) => true;
+        private void OnUpdateComboBoxPositionExecuted(object p)
+        {
+            allPositions = ContextDB.GetContext().Positions.ToList();
+            OnPropertyChanged("AllPositions");
+        }
         public ICommand OpenAddNewPositionWnd
         {
             get
@@ -102,68 +116,7 @@ namespace WPFCoreMVVM_EF.ViewModels
             AddPositionWnd newPositionWindow = new AddPositionWnd();
             SetCenterPositionAndOpen(newPositionWindow);
         }
-        /*public static string CreateUser(string name, string surName, string phone, Position position)
-        {
-            string result = "Уже существует";
-            using (ApplicationContext db = new ApplicationContext())
-            {
-                //check the user is exist
-                bool checkIsExist = db.Users.Any(el => el.Name == name && el.SurName == surName && el.Position == position);
-                if (!checkIsExist)
-                {
-                    User newUser = new User
-                    {
-                        Name = name,
-                        SurName = surName,
-                        Phone = phone,
-                        PositionId = position.Id
-                    };
-                    db.Users.Add(newUser);
-                    db.SaveChanges();
-                    result = "Сделано!";
-                }
-                return result;
-            }
-        }
-
-        private RelayCommand addNewPersonal;
-        public RelayCommand AddNewPersonal
-        {
-            get
-            {
-                return addNewUser ?? new RelayCommand(obj =>
-                {
-                    Window wnd = obj as Window;
-                    string resultStr = "";
-                    if (UserName == null || UserName.Replace(" ", "").Length == 0)
-                    {
-                        SetRedBlockControll(wnd, "NameBlock");
-                    }
-                    if (UserSurName == null || UserSurName.Replace(" ", "").Length == 0)
-                    {
-                        SetRedBlockControll(wnd, "SurNameBlock");
-                    }
-                    //if (UserPhone == null || UserPhone.Replace(" ", "").Length == 0)
-                    //{
-                    //    SetRedBlockControll(wnd, "SurNameBlock");
-                    //}
-                    if (UserPosition == null)
-                    {
-                        MessageBox.Show("Укажите позицию");
-                    }
-                    else
-                    {
-                        resultStr = DataWorker.CreateUser(UserName, UserSurName, UserPhone, UserPosition);
-                        UpdateAllDataView();
-
-                        ShowMessageToUser(resultStr);
-                        SetNullValuesToProperties();
-                        wnd.Close();
-                    }
-                }
-                );
-            }
-        }*/
+        
 
     }
 }

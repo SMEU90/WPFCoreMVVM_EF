@@ -7,7 +7,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:WPFCoreMVVM_EF.Views.Windows"
         mc:Ignorable="d"
-        Title="AddPersonal" Height="700" Width="800">
+        Title="AddPersonal" Height="750" Width="800">
     <Window.DataContext>
         <vm:AddPersonalViewModel/>
     </Window.DataContext>
@@ -34,12 +34,18 @@
                              BorderThickness="2" BorderBrush="{DynamicResource MaterialDesignDivider}"  
                              Style="{StaticResource MaterialDesignOutlinedTextBox}" Cursor="IBeam"  />
             
-        <Button Grid.Column="1" Grid.Row="1"  Margin="30,50,30,0" 
+            <Button Grid.Column="1" Grid.Row="1"  Margin="30,40,30,0" 
                             Style="{StaticResource MaterialDesignFlatMidBgButton}" 
                              materialDesign:ShadowAssist.ShadowDepth="Depth0"  
                              materialDesign:ButtonAssist.CornerRadius="10" 
                              FontSize="18" Content="Добавить должность" Cursor="Hand"
                              Command="{Binding OpenAddNewPositionWnd}"></Button>
+            <Button Grid.Column="1" Grid.Row="1"  Margin="30,30,30,0" 
+                            Style="{StaticResource MaterialDesignFlatMidBgButton}" 
+                             materialDesign:ShadowAssist.ShadowDepth="Depth0"  
+                             materialDesign:ButtonAssist.CornerRadius="10" 
+                             FontSize="18" Content="Обновить список должностей" Cursor="Hand"
+                             Command="{Binding UpdateComboBoxPosition}"></Button>
 
             <ComboBox IsEditable="True"  StaysOpenOnEdit="True" 
                               Grid.Column="2" Grid.Row="1" 

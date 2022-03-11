@@ -4,8 +4,11 @@ using WPFCoreMVVM_EF.Views.Windows;
 using WPFCoreMVVM_EF.Infrastructure.Commands;
 using System.Windows.Input;
 using System.Windows;
+using WPFCoreMVVM_EF.Models;
+using WPFCoreMVVM_EF.Models.Base;
 using System;
-
+using System.Collections.Generic;
+using System.Linq;
 
 namespace WPFCoreMVVM_EF.ViewModels
 {
@@ -69,25 +72,64 @@ namespace WPFCoreMVVM_EF.ViewModels
             _UserDialog = UserDialog;
             _DataService = DataService;
         }
-        /*private void SetCenterPositionAndOpen(Window window)
-        {
-            window.Owner = Application.Current.MainWindow;
-            window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            window.ShowDialog();
-        }*/
-        #region
-        /*private RelayCommand openAddNewUserWnd;
-        public RelayCommand OpenAddNewUserWnd
+        private List<Position> allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
+        private List<Personal> AllPersonal = ContextDB.GetContext().Personals.ToList();//получение всех сотрудников
+        public List<Personal> AllPersonalItemsSource
         {
             get
             {
-                return openAddNewUserWnd ?? new RelayCommand(obj =>
-                {
-                    OpenAddUserWindowMethod();
-                }
-                );
+                return AllPersonal;
             }
-        }*/
-        #endregion
+            private set
+            {
+                AllPersonal = value;
+                OnPropertyChanged("AllPersonalItemsSource");
+            }
+        }
+
+        public ICommand UpdateDataGridPersonal
+        {
+            get
+            {
+                return new LambdaCommand(OnUpdateDataGridPersonalExecuted, CanUpdateDataGridPersonalExecute);
+            }
+        }
+        private bool CanUpdateDataGridPersonalExecute(object p) => true;
+        private void OnUpdateDataGridPersonalExecuted(object p)
+        {
+            allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
+            AllPersonal = ContextDB.GetContext().Personals.ToList();//получение всех сотрудников
+            OnPropertyChanged("AllPersonalItemsSource");
+        }
+        public Personal PersonalSelectedItem { get; set; }
+        public ICommand DeletePersonal
+        {
+            get
+            {
+                return new LambdaCommand(OnDeletePersonalExecuted, CanDeletePersonalExecute);
+            }
+        }
+
+        private bool CanDeletePersonalExecute(object p) => true;
+        private void OnDeletePersonalExecuted(object p)
+        {
+            ContextDB.GetContext().Personals.Remove(PersonalSelectedItem);
+            ContextDB.GetContext().SaveChanges();
+        }
+        
+        public ICommand UpdatePersonal
+        {
+            get
+            {
+                return new LambdaCommand(OnUpdatePersonalExecuted, CanUpdatePersonalExecute);
+            }
+        }
+
+        private bool CanUpdatePersonalExecute(object p) => true;
+        private void OnUpdatePersonalExecuted(object p)
+        {
+            ContextDB.GetContext().Personals.Remove(PersonalSelectedItem);
+            ContextDB.GetContext().SaveChanges();
+        }
     }
 }
