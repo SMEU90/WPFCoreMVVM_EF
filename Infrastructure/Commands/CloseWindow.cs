@@ -4,7 +4,7 @@ using WPFCoreMVVM_EF.Infrastructure.Commands.Base;
 
 namespace WPFCoreMVVM_EF.Infrastructure.Commands
 {
-    internal class ColseWindow : Command
+    internal class CloseWindow : Command
     {
         private static Window GetWindow(object p) => p as Window ?? App.FocusedWindow ?? App.ActivedWindow;
 

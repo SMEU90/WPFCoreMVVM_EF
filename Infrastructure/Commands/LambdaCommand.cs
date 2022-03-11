@@ -18,7 +18,7 @@ namespace WPFCoreMVVM_EF.Infrastructure.Commands
 
         public LambdaCommand(Action<object> Execute, Func<object, bool> CanExecute = null)
         {
-            _Execute = Execute;
+            _Execute = Execute ?? throw new ArgumentNullException(nameof(Execute));//доп проверка, проверяем наличие ссылки делегата
             _CanExecute = CanExecute;
         }
 

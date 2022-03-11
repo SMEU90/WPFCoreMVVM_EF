@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace WPFCoreMVVM_EF.ViewModels.Base
 {
@@ -15,6 +16,12 @@ namespace WPFCoreMVVM_EF.ViewModels.Base
             field = value;
             OnPropertyChanged(PropertyName);
             return true;
+        }
+        protected void SetCenterPositionAndOpen(Window window)
+        {
+            window.Owner = Application.Current.MainWindow;
+            window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            window.ShowDialog();
         }
     }
 }
