@@ -23,10 +23,8 @@ namespace WPFCoreMVVM_EF.ViewModels
         private readonly IDataService _DataService;
         public string TypeName { get; set; }
 
-        // private AddPositionViewModel _PositionViewModel;
-        public AddTypeViewModel(/*AddPositionViewModel PositionViewModel*/)
+        public AddTypeViewModel()
         {
-            // _PositionViewModel = PositionViewModel;
         }
         public AddTypeViewModel(string name)
         {

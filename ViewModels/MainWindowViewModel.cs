@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows;
 using WPFCoreMVVM_EF.Models;
 using WPFCoreMVVM_EF.Models.Base;
+using WPFCoreMVVM_EF.Infrastructure.Commands.Base;
 using WPFCoreMVVM_EF.Services;
 using System;
 using System.Collections.Generic;
@@ -15,12 +16,31 @@ namespace WPFCoreMVVM_EF.ViewModels
 {
     internal class MainWindowViewModel : ViewModel
     {
+        public MainWindowViewModel(IUserDialog UserDialog, IDataService DataService)
+        {
+            _UserDialog = UserDialog;
+            _DataService = DataService;
+        }
         public MainWindowViewModel()
         {
-            //_closeApplicationCommand = new LambdaCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
-            //_openAddNewPersonalWnd = new LambdaCommand(OnOpenAddNewPersonalWndExecuted, CanOpenAddNewPersonalWndExecute);
-           // OpenAddNewPersonalWnd = new LambdaCommand(OnOpenAddNewPersonalWndExecuted, CanOpenAddNewPersonalWndExecute);
-
+            #region Инициализация команд
+            OpenAddNewPersonalWnd = new LambdaCommand(OnOpenAddNewPersonalWndExecuted, CanOpenAddNewPersonalWndExecute);
+            CloseApplicationCommand = new LambdaCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
+            DeletePersonal = new LambdaCommand(OnDeletePersonalExecuted, CanDeletePersonalExecute);
+            EditPersonal = new LambdaCommand(OnEditPersonalExecuted, CanEditPersonalExecute); 
+            OpenAddNewObjectWnd = new LambdaCommand(OnOpenAddNewObjectWndExecuted, CanOpenAddNewObjectWndExecute);
+            DeleteObject = new LambdaCommand(OnDeleteObjectExecuted, CanDeleteObjectExecute);
+            EditObject = new LambdaCommand(OnEditObjectExecuted, CanEditObjectExecute);
+            EditPosition = new LambdaCommand(OnEditPositionExecuted, CanEditPositionExecute);
+            DeletePosition = new LambdaCommand(OnDeletePositionExecuted, CanDeletePositionExecute);
+            OpenAddNewPositionWnd = new LambdaCommand(OnOpenAddNewPositionWndExecuted, CanOpenAddNewPositionWndExecute);
+            DeleteAccount = new LambdaCommand(OnDeleteAccountExecuted, CanDeleteAccountExecute);
+            EditAccount = new LambdaCommand(OnEditAccountExecuted, CanEditAccountExecute);
+            //OpenAddNewAccountnWnd
+            OpenAddNewTypeWnd = new LambdaCommand(OnOpenAddNewTypeWndExecuted, CanOpenAddNewTypeWndExecute);
+            DeleteType = new LambdaCommand(OnDeleteTypeExecuted, CanDeleteTypeExecute);
+            EditType = new LambdaCommand(OnEditTypeExecuted, CanEditTypeExecute);
+            #endregion
         }
 
         private readonly IUserDialog _UserDialog;
@@ -45,44 +65,36 @@ namespace WPFCoreMVVM_EF.ViewModels
         public string Status { get => _Status; set => Set(ref _Status, value); }
 
         #endregion
-       // private ICommand _closeApplicationCommand;
-        public ICommand CloseApplicationCommand {
-            get
-            {
-                return new LambdaCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
-            }
-        }
-       // private ICommand _openAddNewPersonalWnd;
-        public ICommand OpenAddNewPersonalWnd {
-            get
-            {
-                return new LambdaCommand(OnOpenAddNewPersonalWndExecuted, CanOpenAddNewPersonalWndExecute);
-            }
-        }
-        private bool CanOpenAddNewPersonalWndExecute(object p) => true;
-        private void OnOpenAddNewPersonalWndExecuted(object p)
-        {
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////ApplyBlurEffect(this);
-            AddPersonalWnd newPersonalWindow = new AddPersonalWnd();
-            SetCenterPositionAndOpen(newPersonalWindow);
-            allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
-            allPersonal = ContextDB.GetContext().Personals.ToList();//получение всех сотрудников
-            OnPropertyChanged("AllPersonalItemsSource");
 
-        }
-       
+        #region Command : CloseApplicationCommand - закрытие окна
+        public Command CloseApplicationCommand { get; }
         private void OnCloseApplicationCommandExecuted(object p)
         {
             Application.Current.Shutdown();//Current текущее приложение
         }
         private bool CanCloseApplicationCommandExecute(object p) => true;
-        public MainWindowViewModel(IUserDialog UserDialog, IDataService DataService)
-        {
-            _UserDialog = UserDialog;
-            _DataService = DataService;
-        }
+        /*public ICommand CloseApplicationCommand {
+            get
+            {
+                return new LambdaCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
+            }
+        }*/
+        #endregion
+
+        #region Загрузка из бд
+
         private List<Position> allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
         private List<Personal> allPersonal = ContextDB.GetContext().Personals.ToList();//получение всех сотрудников
+        private List<Models.Type> allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
+        private List<Account> allAccount = ContextDB.GetContext().Accounts.ToList();//получение всех заявок объектов оборудования
+        private List<Models.Object> allObject = ContextDB.GetContext().Objects.ToList();//получение всех объектов оборудования
+
+        #endregion
+
+        #region Персонал
+
+        #region Свойства привязки к DataGrid
+        public Personal PersonalSelectedItem { get; set; }
         public List<Personal> AllPersonalItemsSource
         {
             get
@@ -95,31 +107,37 @@ namespace WPFCoreMVVM_EF.ViewModels
                 OnPropertyChanged("AllPersonalItemsSource");
             }
         }
+        #endregion
 
-        public ICommand EditObject
-        {
+        #region Command : OpenAddNewPersonalWnd - открытие окна добавления персонала
+        public Command OpenAddNewPersonalWnd { get; }
+       /* private ICommand _openAddNewPersonalWnd {
             get
             {
-                return new LambdaCommand(OnEditObjectExecuted, CanEditObjectExecute);
+                return new LambdaCommand(OnOpenAddNewPersonalWndExecuted, CanOpenAddNewPersonalWndExecute);
             }
-        }
-        private bool CanEditObjectExecute(object p) => true;
-        private void OnEditObjectExecuted(object p)
+        }*/
+        private bool CanOpenAddNewPersonalWndExecute(object p) => true;
+        private void OnOpenAddNewPersonalWndExecuted(object p)
         {
-            AddObjectWnd newObjectWnd = new AddObjectWnd();
-            SetCenterPositionAndOpen(newObjectWnd, new AddObjectViewModel(ObjectSelectedItem));
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////ApplyBlurEffect(this);
+            AddPersonalWnd newPersonalWindow = new AddPersonalWnd();
+            SetCenterPositionAndOpen(newPersonalWindow);
             allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
             allPersonal = ContextDB.GetContext().Personals.ToList();//получение всех сотрудников
             OnPropertyChanged("AllPersonalItemsSource");
         }
-        public Personal PersonalSelectedItem { get; set; }
-        public ICommand DeletePersonal
+        #endregion
+
+        #region Command : DeletePersonal  - удаление персонала
+        public Command DeletePersonal { get; }
+        /*public ICommand DeletePersonal
         {
             get
             {
                 return new LambdaCommand(OnDeletePersonalExecuted, CanDeletePersonalExecute);
             }
-        }
+        }*/
 
         private bool CanDeletePersonalExecute(object p) => true;
         private void OnDeletePersonalExecuted(object p)
@@ -130,14 +148,17 @@ namespace WPFCoreMVVM_EF.ViewModels
             allPersonal = ContextDB.GetContext().Personals.ToList();//получение всех сотрудников
             OnPropertyChanged("AllPersonalItemsSource");
         }
-        
-        public ICommand EditPersonal//////////////////////////
+        #endregion
+
+        #region Command : EditPersonal  - редактирование персонала
+        public Command EditPersonal { get; }
+       /* public ICommand EditPersonal
         {
             get
             {
                 return new LambdaCommand(OnEditPersonalExecuted, CanEditPersonalExecute);
             }
-        }
+        }*/
 
         private bool CanEditPersonalExecute(object p) => true;
         private void OnEditPersonalExecuted(object p)
@@ -148,6 +169,100 @@ namespace WPFCoreMVVM_EF.ViewModels
             allPersonal = ContextDB.GetContext().Personals.ToList();//получение всех сотрудников
             OnPropertyChanged("AllPersonalItemsSource");
         }
+        #endregion
+
+        #endregion
+
+        #region Объект оборудования
+
+        #region Свойства привязки к DataGrid
+
+        public Models.Object ObjectSelectedItem { get; set; }
+        public List<Models.Object> AllObjectItemsSource
+        {
+            get
+            {
+                return allObject;
+            }
+            private set
+            {
+                allObject = value;
+                OnPropertyChanged("AllObjectItemsSource");
+            }
+        }
+
+        #endregion
+
+        #region Command : OpenAddNewObjectWnd  - открытие окна добавления объекта оборудования
+        public Command OpenAddNewObjectWnd { get; }
+        /*public ICommand OpenAddNewObjectWnd
+        {
+            get
+            {
+                return new LambdaCommand(OnOpenAddNewObjectWndExecuted, CanOpenAddNewObjectWndExecute);
+            }
+        }*/
+
+        private bool CanOpenAddNewObjectWndExecute(object p) => true;
+        private void OnOpenAddNewObjectWndExecuted(object p)
+        {
+            AddObjectWnd newObjectWnd = new AddObjectWnd();
+            SetCenterPositionAndOpen(newObjectWnd);
+            allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
+            allAccount = ContextDB.GetContext().Accounts.ToList();//получение всех ремонтов объектов оборудования
+            allObject = ContextDB.GetContext().Objects.ToList();//получение всех объектов оборудования
+            OnPropertyChanged("AllObjectItemsSource");
+        }
+        #endregion
+
+        #region Command : DeleteObject  - удаление объекта оборудования
+        public Command DeleteObject { get; }
+        /*public ICommand DeleteObject
+        {
+            get
+            {
+                return new LambdaCommand(OnDeleteObjectExecuted, CanDeleteObjectExecute);
+            }
+        }*/
+
+        private bool CanDeleteObjectExecute(object p) => true;
+        private void OnDeleteObjectExecuted(object p)
+        {
+            ContextDB.GetContext().Objects.Remove(ObjectSelectedItem);
+            ContextDB.GetContext().SaveChanges();
+            allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
+            allAccount = ContextDB.GetContext().Accounts.ToList();//получение всех типов объектов оборудования
+            allObject = ContextDB.GetContext().Objects.ToList();//получение всех объектов оборудования
+            OnPropertyChanged("AllObjectItemsSource");
+        }
+        #endregion
+
+        #region Command : EditObject  - редактирование объекта оборудования
+        public Command EditObject { get; }
+        /*public ICommand EditObject
+        {
+            get
+            {
+                return new LambdaCommand(OnEditObjectExecuted, CanEditObjectExecute);
+            }
+        }*/
+        private bool CanEditObjectExecute(object p) => true;
+        private void OnEditObjectExecuted(object p)
+        {
+            AddObjectWnd newObjectWnd = new AddObjectWnd();
+            SetCenterPositionAndOpen(newObjectWnd, new AddObjectViewModel(ObjectSelectedItem));
+            allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
+            allPersonal = ContextDB.GetContext().Personals.ToList();//получение всех сотрудников
+            OnPropertyChanged("AllPersonalItemsSource");
+        }
+        #endregion
+
+        #endregion
+
+        #region Должность
+
+        #region Свойства привязки к DataGrid
+
         public Position PositionSelectedItem { get; set; }
         public List<Position> AllPostitionItemsSource
         {
@@ -161,13 +276,57 @@ namespace WPFCoreMVVM_EF.ViewModels
                 OnPropertyChanged("AllPostitionItemsSource");
             }
         }
-        public ICommand EditPosition//////////////////////////
+
+        #endregion
+
+        #region Command : OpenAddNewPositionWnd  - открытие окна добавления должности
+        public Command OpenAddNewPositionWnd { get; }
+       /* public ICommand OpenAddNewPositionWnd
+        {
+            get
+            {
+                return new LambdaCommand(OnOpenAddNewPositionWndExecuted, CanOpenAddNewPositionWndExecute);
+            }
+        }*/
+        private bool CanOpenAddNewPositionWndExecute(object p) => true;
+        private void OnOpenAddNewPositionWndExecuted(object p)
+        {
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////ApplyBlurEffect(this);
+            AddPositionWnd newPositionWindow = new AddPositionWnd();
+            SetCenterPositionAndOpen(newPositionWindow);
+            allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
+            OnPropertyChanged("AllPostitionItemsSource");
+        }
+        #endregion
+
+        #region Command : DeletePosition  - удаление должности
+        public Command DeletePosition { get; }
+        /*public ICommand DeletePosition
+        {
+            get
+            {
+                return new LambdaCommand(OnDeletePositionExecuted, CanDeletePositionExecute);
+            }
+        }*/
+        private bool CanDeletePositionExecute(object p) => true;
+        private void OnDeletePositionExecuted(object p)
+        {
+            ContextDB.GetContext().Positions.Remove(PositionSelectedItem);
+            ContextDB.GetContext().SaveChanges();
+            allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
+            OnPropertyChanged("AllPostitionItemsSource");
+        }
+        #endregion
+
+        #region Command : EditPosition  - редактирование должности
+        public Command EditPosition { get; }
+       /* public ICommand EditPosition
         {
             get
             {
                 return new LambdaCommand(OnEditPositionExecuted, CanEditPositionExecute);
             }
-        }
+        }*/
 
         private bool CanEditPositionExecute(object p) => true;
         private void OnEditPositionExecuted(object p)
@@ -177,92 +336,13 @@ namespace WPFCoreMVVM_EF.ViewModels
             allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
             OnPropertyChanged("AllPostitionItemsSource");
         }
-        public ICommand DeletePosition
-        {
-            get
-            {
-                return new LambdaCommand(OnDeletePositionExecuted, CanDeletePositionExecute);
-            }
-        }
+        #endregion
 
-        private bool CanDeletePositionExecute(object p) => true;
-        private void OnDeletePositionExecuted(object p)
-        {
-            ContextDB.GetContext().Positions.Remove(PositionSelectedItem);
-            ContextDB.GetContext().SaveChanges();
-            allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
-            OnPropertyChanged("AllPostitionItemsSource");
-        }
-        public ICommand OpenAddNewPositionWnd
-        {
-            get
-            {
-                return new LambdaCommand(OnOpenAddNewPositionWndExecuted, CanOpenAddNewPositionWndExecute);
-            }
-        }
-        private bool CanOpenAddNewPositionWndExecute(object p) => true;
-        private void OnOpenAddNewPositionWndExecuted(object p)
-        {
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////ApplyBlurEffect(this);
-            AddPositionWnd newPositionWindow = new AddPositionWnd();
-            SetCenterPositionAndOpen(newPositionWindow);
-            allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
-            OnPropertyChanged("AllPostitionItemsSource");
+        #endregion
 
-        }
-        public Models.Object ObjectSelectedItem { get; set; }
-        
-        private List<Models.Type> allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
-        private List<Account> allAccount = ContextDB.GetContext().Accounts.ToList();//получение всех типов объектов оборудования
-        private List<Models.Object> allObject = ContextDB.GetContext().Objects.ToList();//получение всех объектов оборудования
-        public List<Models.Object> AllObjectItemsSource
-        {
-            get
-            {
-                return allObject;
-            }
-            private set
-            {
-                allObject = value;
-                OnPropertyChanged("AllObjectItemsSource");
-            }
-        }
-        public ICommand OpenAddNewObjectWnd
-        {
-            get
-            {
-                return new LambdaCommand(OnOpenAddNewObjectWndExecuted, CanOpenAddNewObjectWndExecute);
-            }
-        }
+        #region Заявка
 
-        private bool CanOpenAddNewObjectWndExecute(object p) => true;
-        private void OnOpenAddNewObjectWndExecuted(object p)
-        {
-            AddObjectWnd newObjectWnd = new AddObjectWnd();
-            SetCenterPositionAndOpen(newObjectWnd);
-            allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
-            allAccount = ContextDB.GetContext().Accounts.ToList();//получение всех ремонтов объектов оборудования
-            allObject = ContextDB.GetContext().Objects.ToList();//получение всех объектов оборудования
-            OnPropertyChanged("AllObjectItemsSource");
-        }
-        public ICommand DeleteObject
-        {
-            get
-            {
-                return new LambdaCommand(OnDeleteObjectExecuted, CanDeleteObjectExecute);
-            }
-        }
-
-        private bool CanDeleteObjectExecute(object p) => true;
-        private void OnDeleteObjectExecuted(object p)
-        {
-            ContextDB.GetContext().Objects.Remove(ObjectSelectedItem);
-            ContextDB.GetContext().SaveChanges();
-            allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
-            allAccount = ContextDB.GetContext().Accounts.ToList();//получение всех типов объектов оборудования
-            allObject = ContextDB.GetContext().Objects.ToList();//получение всех объектов оборудования
-            OnPropertyChanged("AllObjectItemsSource");
-        }
+        #region Свойства привязки к DataGrid
         public Account AccountSelectedItem { get; set; }
         public List<Account> AllAccountItemsSource
         {
@@ -276,13 +356,23 @@ namespace WPFCoreMVVM_EF.ViewModels
                 OnPropertyChanged("AllAccountItemsSource");
             }
         }
-        public ICommand DeleteAccount
+
+        #endregion
+
+        #region Command : OpenAddNewAccountnWnd  - открытие окна создания заявки
+        public Command OpenAddNewAccountnWnd { get; }
+
+        #endregion
+
+        #region Command : DeleteAccount  - удаление заявки
+        public Command DeleteAccount { get; }
+       /* public ICommand DeleteAccount
         {
             get
             {
                 return new LambdaCommand(OnDeleteAccountExecuted, CanDeleteAccountExecute);
             }
-        }
+        }*/
 
         private bool CanDeleteAccountExecute(object p) => true;
         private void OnDeleteAccountExecuted(object p)
@@ -292,14 +382,18 @@ namespace WPFCoreMVVM_EF.ViewModels
             allAccount = ContextDB.GetContext().Accounts.ToList();//получение всех типов объектов оборудования
             OnPropertyChanged("AllAccountItemsSource");
         }
-        public ICommand EditAccount////////////////////////////////////////
+
+        #endregion
+
+        #region Command : EditAccount  - редактироване заявки
+        public Command EditAccount { get; }
+        /*public ICommand EditAccount////////////////////////////////////////
         {
             get
             {
                 return new LambdaCommand(OnEditAccountExecuted, CanEditAccountExecute);
             }
-        }
-
+        }*/
         private bool CanEditAccountExecute(object p) => true;
         private void OnEditAccountExecuted(object p)
         {
@@ -308,24 +402,14 @@ namespace WPFCoreMVVM_EF.ViewModels
             allAccount = ContextDB.GetContext().Accounts.ToList();//получение всех типов объектов оборудования
             OnPropertyChanged("AllAccountItemsSource");
         }
-        public ICommand OpenAddNewTypeWnd
-        {
-            get
-            {
-                return new LambdaCommand(OnOpenAddNewTypeWndExecuted, CanOpenAddNewTypeWndExecute);
-            }
-        }
+        #endregion
 
-        private bool CanOpenAddNewTypeWndExecute(object p) => true;
-        private void OnOpenAddNewTypeWndExecuted(object p)
-        {
-            AddTypeWnd newTypeWnd = new AddTypeWnd();
-            SetCenterPositionAndOpen(newTypeWnd);
-            allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
-            OnPropertyChanged("AllTypeItemsSource");
-        }
+        #endregion
+
+        #region Типы оборудования
+
+        #region Свойства привязки к DataGrid
         public Models.Type TypeSelectedItem { get; set; }
-
         public List<Models.Type> AllTypeItemsSource
         {
             get
@@ -339,13 +423,37 @@ namespace WPFCoreMVVM_EF.ViewModels
             }
         }
 
-        public ICommand DeleteType
+        #endregion
+
+        #region Command : OpenAddNewTypeWnd  - открытие окна добавления вида/типа оборудования
+        public Command OpenAddNewTypeWnd { get; }
+        /*public ICommand OpenAddNewTypeWnd
+        {
+            get
+            {
+                return new LambdaCommand(OnOpenAddNewTypeWndExecuted, CanOpenAddNewTypeWndExecute);
+            }
+        }*/
+
+        private bool CanOpenAddNewTypeWndExecute(object p) => true;
+        private void OnOpenAddNewTypeWndExecuted(object p)
+        {
+            AddTypeWnd newTypeWnd = new AddTypeWnd();
+            SetCenterPositionAndOpen(newTypeWnd);
+            allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
+            OnPropertyChanged("AllTypeItemsSource");
+        }
+        #endregion
+
+        #region Command : DeleteType  - удаление вида
+        public Command DeleteType { get; }
+        /*public ICommand DeleteType
         {
             get
             {
                 return new LambdaCommand(OnDeleteTypeExecuted, CanDeleteTypeExecute);
             }
-        }
+        }*/
 
         private bool CanDeleteTypeExecute(object p) => true;
         private void OnDeleteTypeExecuted(object p)
@@ -355,13 +463,18 @@ namespace WPFCoreMVVM_EF.ViewModels
             allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
             OnPropertyChanged("AllTypeItemsSource");
         }
-        public ICommand EditType
+
+        #endregion
+
+        #region Command : EditType  - редактироване вида
+        public Command EditType { get; }
+        /*public ICommand EditType
         {
             get
             {
                 return new LambdaCommand(OnEditTypeExecuted, CanEditTypeExecute);
             }
-        }
+        }*/
 
         private bool CanEditTypeExecute(object p) => true;
         private void OnEditTypeExecuted(object p)
@@ -371,6 +484,10 @@ namespace WPFCoreMVVM_EF.ViewModels
             allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
             OnPropertyChanged("AllTypeItemsSource");
         }
+        #endregion
+
+        #endregion
+
 
     }
 }
