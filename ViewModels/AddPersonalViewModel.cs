@@ -11,6 +11,7 @@ using WPFCoreMVVM_EF.Models;
 using WPFCoreMVVM_EF.Models.Base;
 using System.Windows.Input;
 using System.Windows;
+using WPFCoreMVVM_EF;
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -23,17 +24,18 @@ namespace WPFCoreMVVM_EF.ViewModels
         private readonly IDataService _DataService;
         public AddPersonalViewModel()
         {
-
+        }
+        public AddPersonalViewModel(Personal personal)
+        {
+            NewPersonal = personal;
+            PersonalPosition = NewPersonal.Position;
         }
         public AddPersonalViewModel(IUserDialog UserDialog, IDataService DataService)
         {
             _UserDialog = UserDialog;
             _DataService = DataService;
         }
-        public int PersonalAge { get; set; }
-        public string PersonalFirstName { get; set; }
-        public string PersonalMiddleName { get; set; }
-        public string PersonalSurnameName { get; set; }
+        public Personal NewPersonal { get; set; }
         public bool PersonalStatus { get; set; }
         public Position PersonalPosition { get; set; }
 
@@ -65,23 +67,24 @@ namespace WPFCoreMVVM_EF.ViewModels
             MessageBox.Show(PersonalPosition.Name);
             MessageBox.Show(PersonalPosition.ToString());*/
 
-            bool check = ContextDB.GetContext().Personals.Any(el => el.First_name == PersonalFirstName &&
-                                                            el.Middle_name == PersonalMiddleName &&
-                                                            el.Surname == PersonalSurnameName &&
-                                                            el.Age == PersonalAge); //&&
+            bool check = ContextDB.GetContext().Personals.Any(el => el.First_name == NewPersonal.First_name &&
+                                                            el.Middle_name == NewPersonal.Middle_name &&
+                                                            el.Surname == NewPersonal.Surname &&
+                                                            el.Age == NewPersonal.Age); //&&
                                                             //el.Positions==PersonalPosition);
             if(!check)
             {
                 Personal newPersonal = new Personal
                 {
-                    Age = PersonalAge,
-                    First_name = PersonalFirstName,
-                    Middle_name = PersonalMiddleName,
-                    Surname = PersonalSurnameName,
+                    Age = NewPersonal.Age,
+                    First_name = NewPersonal.First_name,
+                    Middle_name = NewPersonal.Middle_name,
+                    Surname = NewPersonal.Surname,
                     Position = PersonalPosition,
                 };
                 ContextDB.GetContext().Personals.Add(newPersonal);
                 ContextDB.GetContext().SaveChanges();
+
             } else
             {
                 MessageBox.Show("Данный сотрудник уже внесен в базу данных");
@@ -89,20 +92,6 @@ namespace WPFCoreMVVM_EF.ViewModels
 
         }
 
-
-        public ICommand UpdateComboBoxPosition
-        {
-            get
-            {
-                return new LambdaCommand(OnUpdateComboBoxPositionExecuted, CanUpdateComboBoxPositionExecute);
-            }
-        }
-        private bool CanUpdateComboBoxPositionExecute(object p) => true;
-        private void OnUpdateComboBoxPositionExecuted(object p)
-        {
-            allPositions = ContextDB.GetContext().Positions.ToList();
-            OnPropertyChanged("AllPositions");
-        }
         public ICommand OpenAddNewPositionWnd
         {
             get
@@ -115,6 +104,8 @@ namespace WPFCoreMVVM_EF.ViewModels
         {
             AddPositionWnd newPositionWindow = new AddPositionWnd();
             SetCenterPositionAndOpen(newPositionWindow);
+            allPositions = ContextDB.GetContext().Positions.ToList();
+            OnPropertyChanged("AllPositions");
         }
         
 

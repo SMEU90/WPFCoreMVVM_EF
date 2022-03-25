@@ -5,13 +5,11 @@ VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFCoreMVVM_EF", "WPFCoreMVVM_EF.csproj", "{05340043-CB2A-4D90-A105-9DB717E6B5FF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManageStaffDBApp", "..\Windows_ManageStaffDBApp-master\ManageStaffDBApp.csproj", "{D15C2C52-D27E-434F-AFEC-4763DF2DD139}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_ADO.Net", "..\Test_ADO.Net\Test_ADO.Net.csproj", "{8012DB20-11C9-4B33-996C-2EDF36414400}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleEF", "..\ConsoleEF-master\ConsoleEF\ConsoleEF.csproj", "{B0F2D3E7-F7CD-4939-BBD0-D3285C39C88D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResearchersWPF.Data", "..\WPF-MVVM-EFC-Example\ResearchersWPF.Data\ResearchersWPF.Data.csproj", "{3B27AE7E-A295-401C-801F-19822EB9EA1F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleWPF", "..\ConsoleWPF\ConsoleWPF.csproj", "{2734486D-8EF7-4A9C-8803-171F40048907}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResearchersWPF.UI", "..\WPF-MVVM-EFC-Example\ResearchersWPF.UI\ResearchersWPF.UI.csproj", "{AEB147E1-F9B0-438F-B730-3B5CFDFCAF02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,22 +21,18 @@ Global
 		{05340043-CB2A-4D90-A105-9DB717E6B5FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05340043-CB2A-4D90-A105-9DB717E6B5FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05340043-CB2A-4D90-A105-9DB717E6B5FF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D15C2C52-D27E-434F-AFEC-4763DF2DD139}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D15C2C52-D27E-434F-AFEC-4763DF2DD139}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D15C2C52-D27E-434F-AFEC-4763DF2DD139}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D15C2C52-D27E-434F-AFEC-4763DF2DD139}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8012DB20-11C9-4B33-996C-2EDF36414400}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8012DB20-11C9-4B33-996C-2EDF36414400}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8012DB20-11C9-4B33-996C-2EDF36414400}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8012DB20-11C9-4B33-996C-2EDF36414400}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B0F2D3E7-F7CD-4939-BBD0-D3285C39C88D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B0F2D3E7-F7CD-4939-BBD0-D3285C39C88D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B0F2D3E7-F7CD-4939-BBD0-D3285C39C88D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B0F2D3E7-F7CD-4939-BBD0-D3285C39C88D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2734486D-8EF7-4A9C-8803-171F40048907}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2734486D-8EF7-4A9C-8803-171F40048907}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2734486D-8EF7-4A9C-8803-171F40048907}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2734486D-8EF7-4A9C-8803-171F40048907}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B27AE7E-A295-401C-801F-19822EB9EA1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B27AE7E-A295-401C-801F-19822EB9EA1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B27AE7E-A295-401C-801F-19822EB9EA1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B27AE7E-A295-401C-801F-19822EB9EA1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEB147E1-F9B0-438F-B730-3B5CFDFCAF02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEB147E1-F9B0-438F-B730-3B5CFDFCAF02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEB147E1-F9B0-438F-B730-3B5CFDFCAF02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEB147E1-F9B0-438F-B730-3B5CFDFCAF02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

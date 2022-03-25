@@ -9,16 +9,15 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using WPFCoreMVVM_EF.ViewModels;
 
 namespace WPFCoreMVVM_EF.Views.Windows
 {
     /// <summary>
-    /// Логика взаимодействия для AddPersonal.xaml
+    /// Логика взаимодействия для AddAccountWnd.xaml
     /// </summary>
-    public partial class AddPersonalWnd : Window
+    public partial class AddAccountWnd : Window
     {
-        public AddPersonalWnd()
+        public AddAccountWnd()
         {
             InitializeComponent();
         }

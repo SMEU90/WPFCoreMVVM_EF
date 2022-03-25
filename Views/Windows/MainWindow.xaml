@@ -1,5 +1,4 @@
-﻿
-<Window x:Class="WPFCoreMVVM_EF.MainWindow"
+﻿<Window x:Class="WPFCoreMVVM_EF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -12,7 +11,8 @@
         mc:Ignorable="d"
         Title="{Binding Title}" 
         Height="706" Width="800"
-         WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        WindowStartupLocation="CenterScreen" WindowState="Maximized" 
+        x:Name="MainWindowWnd">
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
@@ -35,14 +35,11 @@
                 <MenuItem Header="О программе"/>
             </MenuItem>
         </Menu>
-        <StatusBar DockPanel.Dock="Bottom">
-            <StatusBarItem>
-                <TextBlock Text="1234"/>
-            </StatusBarItem>
+        <!--<StatusBar x:Name="StatusBarAll" DockPanel.Dock="Bottom" >
             <StatusBarItem>
                 <ProgressBar Width="120" Height="14" Value="0"/>
-            </StatusBarItem>
-        </StatusBar>
+            </StatusBarItem> 
+        </StatusBar> -->
         <TabControl>
             <TabItem>
                 <TabItem.Header>
@@ -78,23 +75,60 @@
                                   Width="4"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Персонал">
+            <TabItem Header="Персонал и должности">
                 <Grid Cursor="Hand">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="238*"/>
-                        <ColumnDefinition Width="63*"/>
-                        <ColumnDefinition Width="94*"/>
+                        <ColumnDefinition Width="478*"/>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="291*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="125*"/>
-                        <RowDefinition Height="19*"/>
-                        <RowDefinition Height="52*"/>
+                        <RowDefinition Height="392*"/>
+                        <RowDefinition Height="60*"/>
+                        <RowDefinition Height="148*"/>
+                        <RowDefinition Height="50"/>
                     </Grid.RowDefinitions>
+
+                    <StatusBar Grid.Row="3" Margin="10,0,10,0">
+                        <StatusBarItem>
+                            <Button Cursor="Hand" Margin="5 5 5 5"
+                                    Style="{StaticResource MaterialDesignFlatMidBgButton}" 
+                                    materialDesign:ShadowAssist.ShadowDepth="Depth0"  
+                                    materialDesign:ButtonAssist.CornerRadius="10" 
+                                    Command="{Binding OpenAddNewPersonalWnd}">
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:ImageAwesome Icon="Regular_File" Height="20" 
+                                         Margin="0,0,5,0" 
+                                         Foreground="Red"/>
+                                    <TextBlock Text="Добавить сотрудника" FontSize="18"/>
+                                </StackPanel>
+                            </Button>
+
+                        </StatusBarItem>
+                    </StatusBar>
+                    <StatusBar Grid.Row="3" Margin="10,0,10,0" Grid.Column="2" Grid.RowSpan="2">
+                        <StatusBarItem>
+                            <Button Cursor="Hand" Margin="5 5 5 5"
+                                    Style="{StaticResource MaterialDesignFlatMidBgButton}" 
+                                    materialDesign:ShadowAssist.ShadowDepth="Depth0"  
+                                    materialDesign:ButtonAssist.CornerRadius="10" 
+                                    Command="{Binding OpenAddNewPositionWnd}">
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:ImageAwesome Icon="Regular_File" Height="20" 
+                                         Margin="0,0,5,0" 
+                                         Foreground="Red"/>
+                                    <TextBlock Text="Добавить должность" FontSize="18"/>
+                                </StackPanel>
+                            </Button>
+
+                        </StatusBarItem>
+                    </StatusBar>
+
                     <DataGrid x:Name="PersonalDataGrid" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"  
                               AutoGenerateColumns="False" Margin="10,10,12,10"
                               CanUserAddRows="False" CanUserDeleteRows="False"
                               CanUserReorderColumns="False"
-                              IsReadOnly="True"
+                              IsReadOnly="True" 
                               SelectedItem="{Binding PersonalSelectedItem}"
                               ItemsSource="{Binding AllPersonalItemsSource}">
                         <DataGrid.Columns>
@@ -103,86 +137,280 @@
                             <DataGridTextColumn Header="Отчество" Binding="{Binding Middle_name}"/>
                             <DataGridTextColumn Header="Возраст" Binding="{Binding Age}"/>
                             <DataGridTextColumn Header="Должность" Binding="{Binding Position.Name}"/>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding ElementName=MainWindowWnd,  Path=DataContext.EditPersonal}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <fa:ImageAwesome Icon="Regular_AddressBook" Height="20" 
+                                                Margin="0,0,5,0" 
+                                                Foreground="Red"/>
+                                                <TextBlock Text="Редактировать" FontSize="16"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding ElementName=MainWindowWnd,  Path=DataContext.DeletePersonal}" Cursor="Hand">
+                                            <StackPanel Orientation="Horizontal">
+                                                <fa:ImageAwesome Icon="Regular_File" Height="20" 
+                                                Margin="0,0,5,0" 
+                                                Foreground="Red"/>
+                                                <TextBlock Text="Удалить" FontSize="16"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
-                        <Button Margin="10,20,10,10" MaxWidth="300" MinWidth="220"
-                            Style="{StaticResource MaterialDesignFlatMidBgButton}" 
-                             materialDesign:ShadowAssist.ShadowDepth="Depth0"  
-                             materialDesign:ButtonAssist.CornerRadius="10" 
-                             FontSize="18" Content="Добавить сотрудника" Cursor="Hand"
-                             Command="{Binding OpenAddNewPersonalWnd}"/>
-                        <Button Margin="10,20,10,10" MaxWidth="300" MinWidth="220"
-                            Style="{StaticResource MaterialDesignFlatMidBgButton}" 
-                             materialDesign:ShadowAssist.ShadowDepth="Depth0"  
-                             materialDesign:ButtonAssist.CornerRadius="10" 
-                             FontSize="18" Content="Редактировать сотрудника" Cursor="Hand"
-                             Command="{Binding UpdatePersonal}"/>
-                        <Button Margin="10,20,10,10" MaxWidth="300" MinWidth="220"
-                            Style="{StaticResource MaterialDesignFlatMidBgButton}" 
-                             materialDesign:ShadowAssist.ShadowDepth="Depth0"  
-                             materialDesign:ButtonAssist.CornerRadius="10" 
-                             FontSize="18" Content="Удалить сотрудника" Cursor="Hand"
-                             Command="{Binding DeletePersonal}"/>
-                        <Button Margin="10,20,10,10" MaxWidth="300" MinWidth="220"
-                            Style="{StaticResource MaterialDesignFlatMidBgButton}" 
-                             materialDesign:ShadowAssist.ShadowDepth="Depth0"  
-                             materialDesign:ButtonAssist.CornerRadius="10" 
-                             FontSize="18" Content="Обновить список" Cursor="Hand"
-                             Command="{Binding UpdateDataGridPersonal}"/>
-                    </StackPanel>
-                    
-                    
-                    <!--<StackPanel Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2">
-                        <TextBox Margin="0,30,0,0" Text=""
-                             x:Name="txtAge" FontSize="18" 
-                             materialDesign:HintAssist.Hint="Возраст" 
-                             BorderThickness="2" BorderBrush="{DynamicResource MaterialDesignDivider}"  
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}" Cursor="IBeam"  />
-                        <TextBox Margin="0,30,0,0" Text=""
-                             x:Name="txtSurname" FontSize="18" 
-                             materialDesign:HintAssist.Hint="Фамилия" 
-                             BorderThickness="2" BorderBrush="{DynamicResource MaterialDesignDivider}"  
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}" Cursor="IBeam"  />
-                        <TextBox Margin="0,30,0,0" Text=""
-                             x:Name="txtFirstName" FontSize="18" 
-                             materialDesign:HintAssist.Hint="Имя" 
-                             BorderThickness="2" BorderBrush="{DynamicResource MaterialDesignDivider}"  
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}" Cursor="IBeam"  />
-                        <TextBox Margin="0,30,0,0" Text=""
-                             x:Name="txtMiddleName" FontSize="18" 
-                             materialDesign:HintAssist.Hint="Отчество" 
-                             BorderThickness="2" BorderBrush="{DynamicResource MaterialDesignDivider}"  
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}" Cursor="IBeam"  />
-                    </StackPanel>
-                    <Button Grid.Column="1" Grid.Row="1"  Margin="0,20,0,0" 
-                            Style="{StaticResource MaterialDesignFlatMidBgButton}" 
-                             materialDesign:ShadowAssist.ShadowDepth="Depth0"  
-                             materialDesign:ButtonAssist.CornerRadius="10" 
-                             FontSize="18" Content="Добавить должность" Cursor="Hand"/>
-
-                    <ComboBox IsEditable="True"  StaysOpenOnEdit="True" 
-                              Grid.Column="2" Grid.Row="1" 
-                              Margin="6,20,0,0" FontSize="18" 
-                              MaxHeight="40"
-                              materialDesign:HintAssist.Hint="Должность">
-
-                    </ComboBox>
-
-                    <Button  Margin="0,20,0,0" x:Name="AddPersonalBtn" 
-                             Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2"
-                             Style="{StaticResource MaterialDesignFlatMidBgButton}" 
-                             materialDesign:ShadowAssist.ShadowDepth="Depth0"  
-                             materialDesign:ButtonAssist.CornerRadius="10" 
-                             FontSize="18" Content="Добавить сотрудника" Cursor="Hand" 
-                             Command="{Binding CloseWindow}"></Button>
-                     -->
-
-
+                    <DataGrid x:Name="PositionDataGrid" Grid.Row="0" Grid.Column="2" Grid.RowSpan="3"  
+                              AutoGenerateColumns="False" Margin="10,10,12,10"
+                              CanUserAddRows="False" CanUserDeleteRows="False"
+                              CanUserReorderColumns="False"
+                              IsReadOnly="True" 
+                              SelectedItem="{Binding PositionSelectedItem}"
+                              ItemsSource="{Binding AllPostitionItemsSource}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Наименование должности" Binding="{Binding Name}"/>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding ElementName=MainWindowWnd,  Path=DataContext.EditPosition}" Cursor="Hand">
+                                            <StackPanel Orientation="Horizontal">
+                                                <fa:ImageAwesome Icon="Regular_AddressBook" Height="20" 
+                                                Margin="0,0,5,0" 
+                                                Foreground="Red"/>
+                                                <TextBlock Text="Редактировать" FontSize="16"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding ElementName=MainWindowWnd,  Path=DataContext.DeletePosition}" Cursor="Hand">
+                                            <StackPanel Orientation="Horizontal">
+                                                <fa:ImageAwesome Icon="Regular_File" Height="20" 
+                                                Margin="0,0,5,0" 
+                                                Foreground="Red"/>
+                                                <TextBlock Text="Удалить" FontSize="16"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </Grid>
             </TabItem>
             <TabItem Header="Объекты оборудования">
+                <Grid x:Name="GridObject" Cursor="Hand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="392*"/>
+                        <RowDefinition Height="60*"/>
+                        <RowDefinition Height="148*"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+                    <StatusBar Grid.Row="3" Margin="10,0,10,0">
+                        <StatusBarItem>
+                            <Button Cursor="Hand" Margin="5 5 5 5"
+                                    Style="{StaticResource MaterialDesignFlatMidBgButton}" 
+                                    materialDesign:ShadowAssist.ShadowDepth="Depth0"  
+                                    materialDesign:ButtonAssist.CornerRadius="10" 
+                                    Command="{Binding OpenAddNewObjectWnd}">
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:ImageAwesome Icon="Regular_File" Height="20" 
+                                         Margin="0,0,5,0" 
+                                         Foreground="Red"/>
+                                    <TextBlock Text="Добавить оборудование" FontSize="18"/>
+                                </StackPanel>
+                            </Button>
+                        </StatusBarItem>
+                    </StatusBar>
+                    <DataGrid x:Name="ObjectDataGrid" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"  
+                              AutoGenerateColumns="False" Margin="10,10,12,10"
+                              CanUserAddRows="False" CanUserDeleteRows="False"
+                              CanUserReorderColumns="False"
+                              IsReadOnly="True"
+                              SelectedItem="{Binding ObjectSelectedItem}"
+                              ItemsSource="{Binding AllObjectItemsSource}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Название" Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Вид оборудования" Binding="{Binding Type.Name}"/>
+                            <DataGridTextColumn Header="Время наработки на отказ" Binding="{Binding Failure_time}"/>
+                            <DataGridTextColumn Header="Время работы после ремонта" Binding="{Binding Real_working_hours}"/>
+                            <DataGridTextColumn Header="Общее время работы" Binding="{Binding All_working_hours}"/>
+                            <DataGridTextColumn Header="Влажность" Binding="{Binding Humidity}"/>
+                            <DataGridTextColumn Header="Проветриваемость" Binding="{Binding Airiness}"/>
+                            <DataGridTextColumn Header="Жара" Binding="{Binding Heat}"/>
+                            <DataGridTextColumn Header="Статус" Binding="{Binding Status}"/>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding ElementName=MainWindowWnd,  Path=DataContext.EditObject}" Cursor="Hand">
+                                            <StackPanel Orientation="Horizontal">
+                                                <fa:ImageAwesome Icon="Regular_AddressBook" Height="20" 
+                                                Margin="0,0,5,0" 
+                                                Foreground="Red"/>
+                                                <TextBlock Text="Редактировать" FontSize="16"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding ElementName=MainWindowWnd,  Path=DataContext.DeleteObject}" Cursor="Hand">
+                                            <StackPanel Orientation="Horizontal">
+                                                <fa:ImageAwesome Icon="Regular_File" Height="20" 
+                                                Margin="0,0,5,0" 
+                                                Foreground="Red"/>
+                                                <TextBlock Text="Удалить" FontSize="16"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Обслуживание и виды оборудования">
+                <Grid Cursor="Hand">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="298*"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="98*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="392*"/>
+                        <RowDefinition Height="60*"/>
+                        <RowDefinition Height="148*"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+                    <StatusBar Grid.Row="3" Margin="10,0,10,0" Grid.Column="2" Grid.RowSpan="2">
+                        <StatusBarItem>
+                            <Button Cursor="Hand" Margin="5 5 5 5"
+                                    Style="{StaticResource MaterialDesignFlatMidBgButton}" 
+                                    materialDesign:ShadowAssist.ShadowDepth="Depth0"  
+                                    materialDesign:ButtonAssist.CornerRadius="10" 
+                                    Command="{Binding OpenAddNewTypeWnd}">
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:ImageAwesome Icon="Regular_File" Height="20" 
+                                         Margin="0,0,5,0" 
+                                         Foreground="Red"/>
+                                    <TextBlock Text="Добавить тип/вид" FontSize="18"/>
+                                </StackPanel>
+                            </Button>
+                        </StatusBarItem>
+                    </StatusBar>
+                    <StatusBar Grid.Row="3" Margin="10,0,10,0" Grid.Column="0" Grid.RowSpan="2">
+                        <StatusBarItem>
+                            <Button Cursor="Hand" Margin="5 5 5 5"
+                                    Style="{StaticResource MaterialDesignFlatMidBgButton}" 
+                                    materialDesign:ShadowAssist.ShadowDepth="Depth0"  
+                                    materialDesign:ButtonAssist.CornerRadius="10" 
+                                    Command="{Binding OpenAddNewAccountWnd}">
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:ImageAwesome Icon="Regular_File" Height="20" 
+                                         Margin="0,0,5,0" 
+                                         Foreground="Red"/>
+                                    <TextBlock Text="Создать заявку" FontSize="18"/>
+                                </StackPanel>
+                            </Button>
+                        </StatusBarItem>
+                    </StatusBar>
+                    <DataGrid x:Name="AccountDataGrid" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"  
+                              AutoGenerateColumns="False" Margin="10,10,12,10"
+                              CanUserAddRows="False" CanUserDeleteRows="False"
+                              CanUserReorderColumns="False"
+                              IsReadOnly="True"
+                              SelectedItem="{Binding AccountSelectedItem}"
+                              ItemsSource="{Binding AllAccountItemsSource}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Дата ремонта" Binding="{Binding Date_repair}"/>
+                            <DataGridTextColumn Header="Дата создания заявки" Binding="{Binding Date_fail}"/>
+                            <DataGridTextColumn Header="Вид работы" Binding="{Binding Type_of_repair}"/>
+                            <DataGridTextColumn Header="Время работы оборудования между ремонтами" Binding="{Binding Real_working_hours}"/>
+                            <DataGridTextColumn Header="Статус заявки" Binding="{Binding Status}"/>
+                            <DataGridTextColumn Header="Наименование объекта работы" Binding="{Binding Object.Name}"/>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding ElementName=MainWindowWnd,  Path=DataContext.EditAccount}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <fa:ImageAwesome Icon="Regular_AddressBook" Height="20" 
+                                                Margin="0,0,5,0" 
+                                                Foreground="Red"/>
+                                                <TextBlock Text="Редактировать" FontSize="16"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding ElementName=MainWindowWnd,  Path=DataContext.DeleteAccount}" Cursor="Hand">
+                                            <StackPanel Orientation="Horizontal">
+                                                <fa:ImageAwesome Icon="Regular_File" Height="20" 
+                                                Margin="0,0,5,0" 
+                                                Foreground="Red"/>
+                                                <TextBlock Text="Удалить" FontSize="16"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <DataGrid x:Name="TypeDataGrid" Grid.Row="0" Grid.Column="2" Grid.RowSpan="3"  
+                              AutoGenerateColumns="False" Margin="10,10,12,10"
+                              CanUserAddRows="False" CanUserDeleteRows="False"
+                              CanUserReorderColumns="False"
+                              IsReadOnly="True" 
+                              SelectedItem="{Binding TypeSelectedItem}"
+                              ItemsSource="{Binding AllTypeItemsSource}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Вид/тип" Binding="{Binding Name}"/>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding ElementName=MainWindowWnd,  Path=DataContext.EditType}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <fa:ImageAwesome Icon="Regular_AddressBook" Height="20" 
+                                                Margin="0,0,5,0" 
+                                                Foreground="Red"/>
+                                                <TextBlock Text="Редактировать" FontSize="16"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding ElementName=MainWindowWnd,  Path=DataContext.DeleteType}" Cursor="Hand">
+                                            <StackPanel Orientation="Horizontal">
+                                                <fa:ImageAwesome Icon="Regular_File" Height="20" 
+                                                Margin="0,0,5,0" 
+                                                Foreground="Red"/>
+                                                <TextBlock Text="Удалить" FontSize="16"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
 
+                </Grid>
             </TabItem>
             <TabItem Header="Шаблон ППР">
 

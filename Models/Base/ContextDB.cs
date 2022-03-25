@@ -11,13 +11,16 @@ namespace WPFCoreMVVM_EF.Models.Base
     public class ContextDB : DbContext
     {
         public DbSet<User> Users { get; set; }
-
+        public DbSet<WPFCoreMVVM_EF.Models.Object> Objects { get; set; }
+        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Type> Types { get; set; }
         public DbSet<Position> Positions { get; set; }
 
         public DbSet<Personal> Personals { get; set; }
 
         public ContextDB(DbContextOptions<ContextDB> opt) : base(opt)
         {
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
@@ -40,8 +43,8 @@ namespace WPFCoreMVVM_EF.Models.Base
                 _context = new ContextDB(db_options);
 
 
-                string login = "SMEU";
-                string password = "dfrfrfgf";
+                //string login = "SMEU";
+                //string password = "dfrfrfgf";
 
                /* User user = _context.Users.FirstOrDefault(p => p.Login == login && p.Password == password);
                 //User user = _contex.Users.AsQueryable().Where(p => p.Login == login.Trim() && p.Password == password.Trim()).FirstOrDefault();

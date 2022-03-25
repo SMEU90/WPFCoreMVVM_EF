@@ -17,31 +17,27 @@ using System.Windows.Media;
 
 namespace WPFCoreMVVM_EF.ViewModels
 {
-    internal class AddPositionViewModel : ViewModel
+    internal class AddTypeViewModel : ViewModel
     {
         private readonly IUserDialog _UserDialog;
         private readonly IDataService _DataService;
-        public string PositionName { get; set; }
+        public string TypeName { get; set; }
 
         // private AddPositionViewModel _PositionViewModel;
-        public AddPositionViewModel(/*AddPositionViewModel PositionViewModel*/)
+        public AddTypeViewModel(/*AddPositionViewModel PositionViewModel*/)
         {
-           // _PositionViewModel = PositionViewModel;
+            // _PositionViewModel = PositionViewModel;
         }
-        public AddPositionViewModel(string name)
+        public AddTypeViewModel(string name)
         {
-            PositionName = name;
+            TypeName=name;
         }
-        public AddPositionViewModel(IUserDialog UserDialog, IDataService DataService)
+        public AddTypeViewModel(IUserDialog UserDialog, IDataService DataService)
         {
             _UserDialog = UserDialog;
             _DataService = DataService;
         }
-
-        
-
-
-        public ICommand AddNewPosition
+        public ICommand AddNewType
         {
             get
             {
@@ -52,23 +48,22 @@ namespace WPFCoreMVVM_EF.ViewModels
         private void OnOpenAddNewPositionExecuted(object p)
         {
 
-            bool check = ContextDB.GetContext().Positions.Any(el => el.Name == PositionName ); 
+            bool check = ContextDB.GetContext().Types.Any(el => el.Name == TypeName);
 
             if (!check)
             {
-                Position position = new Position
+                Models.Type type = new Models.Type
                 {
-                    Name = PositionName,
+                    Name = TypeName,
                 };
-                ContextDB.GetContext().Positions.Add(position);
+                ContextDB.GetContext().Types.Add(type);
                 ContextDB.GetContext().SaveChanges();
 
-            } else
+            }
+            else
             {
-                MessageBox.Show("Данная должность уже имеется в базе данных");
+                MessageBox.Show("Данный вид оборудования уже имеется в базе данных");
             }
         }
-
-
     }
 }
