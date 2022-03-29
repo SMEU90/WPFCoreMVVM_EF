@@ -29,9 +29,6 @@ namespace WPFCoreMVVM_EF.Models.Base
         {
             if (_context == null)
             {
-
-
-
                 var configuration = new ConfigurationBuilder()
                .AddJsonFile("appsettings.json")
                .Build();
@@ -42,21 +39,6 @@ namespace WPFCoreMVVM_EF.Models.Base
 
                 _context = new ContextDB(db_options);
 
-
-                //string login = "SMEU";
-                //string password = "dfrfrfgf";
-
-               /* User user = _context.Users.FirstOrDefault(p => p.Login == login && p.Password == password);
-                //User user = _contex.Users.AsQueryable().Where(p => p.Login == login.Trim() && p.Password == password.Trim()).FirstOrDefault();
-                if (user != null)
-                {
-                    MessageBox.Show("Good");
-                }
-               */
-
-
-
-               /// MessageBox.Show("Good");
             }    
                 
             return _context; ;

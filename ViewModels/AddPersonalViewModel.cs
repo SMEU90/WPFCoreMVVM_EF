@@ -11,10 +11,12 @@ using WPFCoreMVVM_EF.Models;
 using WPFCoreMVVM_EF.Models.Base;
 using System.Windows.Input;
 using System.Windows;
+using WPFCoreMVVM_EF.Infrastructure.Commands.Base;
 using WPFCoreMVVM_EF;
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Collections.ObjectModel;
 
 namespace WPFCoreMVVM_EF.ViewModels
 {
@@ -22,13 +24,31 @@ namespace WPFCoreMVVM_EF.ViewModels
     {
         private readonly IUserDialog _UserDialog;
         private readonly IDataService _DataService;
+        public string AddButtonText { get; set; }
         public AddPersonalViewModel()
         {
+            AddButtonText = "Добавить сотрудника";
+            AddNewPersonal = new LambdaCommand(OnOpenAddNewPersonalExecuted, CanOpenAddNewPersonalExecute);
+            OpenAddNewPositionWnd = new LambdaCommand(OnOpenAddNewPositionWndExecuted, CanOpenAddNewPositionWndExecute);
+            NewPersonal = new Personal();
+
         }
         public AddPersonalViewModel(Personal personal)
         {
-            NewPersonal = personal;
-            PersonalPosition = NewPersonal.Position;
+            AddButtonText = "Изменить сотрудника";
+            NewPersonal = new Personal();
+            NewPersonal.Age=personal.Age;
+            NewPersonal.Status=personal.Status;
+            NewPersonal.Surname=personal.Surname;
+            NewPersonal.Middle_name=personal.Middle_name;
+            NewPersonal.First_name=personal.First_name;
+            NewPersonal.Id=personal.Id;
+            NewPersonal.PositionId=personal.PositionId;
+            NewPersonal.Position = personal.Position;
+            OldPersonal = personal;
+            _isNewPersonal = false;
+            AddNewPersonal = new LambdaCommand(OnOpenAddNewPersonalExecuted, CanOpenAddNewPersonalExecute);
+            OpenAddNewPositionWnd = new LambdaCommand(OnOpenAddNewPositionWndExecuted, CanOpenAddNewPositionWndExecute);
         }
         public AddPersonalViewModel(IUserDialog UserDialog, IDataService DataService)
         {
@@ -36,42 +56,28 @@ namespace WPFCoreMVVM_EF.ViewModels
             _DataService = DataService;
         }
         public Personal NewPersonal { get; set; }
-        public bool PersonalStatus { get; set; }
-        public Position PersonalPosition { get; set; }
-
-        private List<Position> allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
-        public List<Position> AllPositions
+        private Personal OldPersonal { get; set; }
+        private bool _isNewPersonal=true;
+        public ObservableCollection<Position> AllPosition
         {
             get
             {
-                return allPositions;
+                return StaticObservableCollections.allPosition;
             }
-            private set
+            set
             {
-                allPositions = value;
-                OnPropertyChanged("AllPositions");
+                StaticObservableCollections.allPosition = value;
             }
         }
-
-        public ICommand AddNewPersonal
-        {
-            get
-            {
-                return new LambdaCommand(OnOpenAddNewPersonalExecuted, CanOpenAddNewPersonalExecute);
-            }
-        }
+        public Command AddNewPersonal { get; }
         private bool CanOpenAddNewPersonalExecute(object p) => true;
         private void OnOpenAddNewPersonalExecuted(object p)
         {
-            /*MessageBox.Show(PersonalPosition.Id.ToString());
-            MessageBox.Show(PersonalPosition.Name);
-            MessageBox.Show(PersonalPosition.ToString());*/
-
             bool check = ContextDB.GetContext().Personals.Any(el => el.First_name == NewPersonal.First_name &&
                                                             el.Middle_name == NewPersonal.Middle_name &&
                                                             el.Surname == NewPersonal.Surname &&
                                                             el.Age == NewPersonal.Age); //&&
-                                                            //el.Positions==PersonalPosition);
+                                                            //el.Positions==PersonalPosition);///////////////////////////////////////////////////////////////////////
             if(!check)
             {
                 Personal newPersonal = new Personal
@@ -80,32 +86,34 @@ namespace WPFCoreMVVM_EF.ViewModels
                     First_name = NewPersonal.First_name,
                     Middle_name = NewPersonal.Middle_name,
                     Surname = NewPersonal.Surname,
-                    Position = PersonalPosition,
+                    Position = NewPersonal.Position,
                 };
-                ContextDB.GetContext().Personals.Add(newPersonal);
-                ContextDB.GetContext().SaveChanges();
-
+                if (_isNewPersonal)
+                {
+                    StaticObservableCollections.allPersonal.Add(newPersonal);
+                    ContextDB.GetContext().Personals.Add(newPersonal);
+                    ContextDB.GetContext().SaveChanges();
+                } else
+                {
+                    ContextDB.GetContext().Personals.Remove(OldPersonal);
+                    StaticObservableCollections.allPersonal.Remove(OldPersonal);
+                    StaticObservableCollections.allPersonal.Add(newPersonal);
+                    ContextDB.GetContext().Personals.Add(newPersonal);
+                    ContextDB.GetContext().SaveChanges();
+                    OldPersonal = newPersonal;
+                }
             } else
             {
                 MessageBox.Show("Данный сотрудник уже внесен в базу данных");
             }
 
         }
-
-        public ICommand OpenAddNewPositionWnd
-        {
-            get
-            {
-                return new LambdaCommand(OnOpenAddNewPositionWndExecuted, CanOpenAddNewPositionWndExecute);
-            }
-        }
+        public Command OpenAddNewPositionWnd { get; }
         private bool CanOpenAddNewPositionWndExecute(object p) => true;
         private void OnOpenAddNewPositionWndExecuted(object p)
         {
             AddPositionWnd newPositionWindow = new AddPositionWnd();
             SetCenterPositionAndOpen(newPositionWindow);
-            allPositions = ContextDB.GetContext().Positions.ToList();
-            OnPropertyChanged("AllPositions");
         }
         
 

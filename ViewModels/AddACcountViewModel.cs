@@ -14,22 +14,32 @@ using System.Windows;
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Collections.ObjectModel;
+using WPFCoreMVVM_EF.Infrastructure.Commands.Base;
 
-namespace WPFCoreMVVM_EF.ViewModels
+namespace WPFCoreMVVM_EF.ViewModels//Not ready
 {
     internal class AddACcountViewModel : ViewModel
     {
         private readonly IUserDialog _UserDialog;
         private readonly IDataService _DataService;
+        public string AddButtonText { get; set; }
         public Models.Object ObjectAdd { get; set; }
-        public Account Account { get; set; }
+        public Account NewAccount { get; set; }
+        private Account OldAccount { get; set; }
+        private bool _isNewAccount = true;
         public AddACcountViewModel()
         {
-
+            NewAccount=new Account();
+            AddNewAccount = new LambdaCommand(OnAddNewAccountExecuted, CanAddNewAccountExecute);
+            OpenAddNewObjectWnd = new LambdaCommand(OnOpenAddNewPositionWndExecuted, CanOpenAddNewPositionWndExecute);
         }
         public AddACcountViewModel(Models.Account account)
         {
-            Account = account;
+            AddNewAccount = new LambdaCommand(OnAddNewAccountExecuted, CanAddNewAccountExecute);
+            OpenAddNewObjectWnd = new LambdaCommand(OnOpenAddNewPositionWndExecuted, CanOpenAddNewPositionWndExecute); 
+            NewAccount = account;///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            OldAccount = account;
         }
         public AddACcountViewModel(IUserDialog UserDialog, IDataService DataService)
         {
@@ -37,28 +47,26 @@ namespace WPFCoreMVVM_EF.ViewModels
             _DataService = DataService;
         }
 
-
-        private List<Models.Object> allObject = ContextDB.GetContext().Objects.ToList();//получение всех объектов оборудования
-        public List<Models.Object> AllObject
+        public ObservableCollection<Models.Object> AllObject
         {
             get
             {
-                return allObject;
+                return StaticObservableCollections.allObject;
             }
-            private set
+            set
             {
-                allObject = value;
-                OnPropertyChanged("AllObject");
+                StaticObservableCollections.allObject = value;
+                //OnPropertyChanged("AllPositions");
             }
         }
-
-        public ICommand AddNewAccount
+        public Command AddNewAccount { get; }
+        /*public ICommand AddNewAccount
         {
             get
             {
                 return new LambdaCommand(OnAddNewAccountExecuted, CanAddNewAccountExecute);
             }
-        }
+        }*/
         private bool CanAddNewAccountExecute(object p) => true;
         private void OnAddNewAccountExecuted(object p)
         {
@@ -108,20 +116,19 @@ namespace WPFCoreMVVM_EF.ViewModels
             }*/
 
         }
-        public ICommand OpenAddNewObjectWnd
+        public Command OpenAddNewObjectWnd { get; }
+        /*public ICommand OpenAddNewObjectWnd
         {
             get
             {
                 return new LambdaCommand(OnOpenAddNewPositionWndExecuted, CanOpenAddNewPositionWndExecute);
             }
-        }
+        }*/
         private bool CanOpenAddNewPositionWndExecute(object p) => true;
         private void OnOpenAddNewPositionWndExecuted(object p)
         {
             AddObjectWnd newObjectWindow = new AddObjectWnd();
             SetCenterPositionAndOpen(newObjectWindow);
-            allObject = ContextDB.GetContext().Objects.ToList();//получение всех объектов оборудования
-            OnPropertyChanged("AllObject");
         }
     }
 }
