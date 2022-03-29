@@ -50,7 +50,7 @@
                               IsReadOnly="False"
                               ItemsSource="{Binding AllPositions}"
                               DisplayMemberPath="Name"
-                              SelectedItem="{Binding PersonalPosition}">
+                              SelectedItem="{Binding NewPersonal.Position}">
             </ComboBox>
 
         <Button  Margin="30,50,30,0" x:Name="AddPersonalBtn" 
@@ -58,7 +58,7 @@
                              Style="{StaticResource MaterialDesignFlatMidBgButton}" 
                              materialDesign:ShadowAssist.ShadowDepth="Depth0"  
                              materialDesign:ButtonAssist.CornerRadius="10" 
-                             FontSize="18" Content="Добавить сотрудника" Cursor="Hand" 
+                             FontSize="18" Content="{Binding AddButtonText}" Cursor="Hand" 
                              Command="{Binding AddNewPersonal}"></Button>
         </StackPanel>
     </Grid>

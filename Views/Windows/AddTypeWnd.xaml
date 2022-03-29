@@ -13,7 +13,7 @@
     </Window.DataContext>-->
     <Grid>
         <StackPanel>
-            <TextBox Margin="30,30,30,30" Text="{Binding TypeName}"
+            <TextBox Margin="30,30,30,30" Text="{Binding NewType.Name}"
                              x:Name="txtAge" FontSize="18" 
                              materialDesign:HintAssist.Hint="Вид/тип оборудования" 
                              BorderThickness="2" BorderBrush="{DynamicResource MaterialDesignDivider}"  

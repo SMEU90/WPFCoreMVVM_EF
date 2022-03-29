@@ -9,11 +9,13 @@ using WPFCoreMVVM_EF.Infrastructure.Commands;
 using WPFCoreMVVM_EF.Services.Interfaces;
 using WPFCoreMVVM_EF.Models;
 using WPFCoreMVVM_EF.Models.Base;
+using WPFCoreMVVM_EF.Infrastructure.Commands.Base;
 using System.Windows.Input;
 using System.Windows;
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Media;
+
 
 namespace WPFCoreMVVM_EF.ViewModels
 {
@@ -21,42 +23,63 @@ namespace WPFCoreMVVM_EF.ViewModels
     {
         private readonly IUserDialog _UserDialog;
         private readonly IDataService _DataService;
-        public string TypeName { get; set; }
+        public Models.Type NewType { get; set; }
+        private Models.Type OldType { get; set; }
+        private bool _isNewType = true;
 
         public AddTypeViewModel()
         {
+            AddNewType = new LambdaCommand(OnOpenAddNewPositionExecuted, CanOpenAddNewPositionExecute);
+            NewType = new Models.Type();
         }
-        public AddTypeViewModel(string name)
+        public AddTypeViewModel(Models.Type type)
         {
-            TypeName=name;
+            AddNewType = new LambdaCommand(OnOpenAddNewPositionExecuted, CanOpenAddNewPositionExecute);
+            NewType = new Models.Type();
+            NewType.Name = type.Name;
+            OldType = type;
+            _isNewType = false;
         }
         public AddTypeViewModel(IUserDialog UserDialog, IDataService DataService)
         {
             _UserDialog = UserDialog;
             _DataService = DataService;
         }
-        public ICommand AddNewType
+        public Command AddNewType { get; }
+        /*public ICommand AddNewType
         {
             get
             {
                 return new LambdaCommand(OnOpenAddNewPositionExecuted, CanOpenAddNewPositionExecute);
             }
-        }
+        }*/
         private bool CanOpenAddNewPositionExecute(object p) => true;
         private void OnOpenAddNewPositionExecuted(object p)
         {
 
-            bool check = ContextDB.GetContext().Types.Any(el => el.Name == TypeName);
+            bool check = ContextDB.GetContext().Types.Any(el => el.Name == NewType.Name);
 
             if (!check)
             {
                 Models.Type type = new Models.Type
                 {
-                    Name = TypeName,
+                    Name = NewType.Name,
                 };
-                ContextDB.GetContext().Types.Add(type);
-                ContextDB.GetContext().SaveChanges();
-
+                if (_isNewType)
+                {
+                    StaticObservableCollections.allType.Add(type);
+                    ContextDB.GetContext().Types.Add(type);
+                    ContextDB.GetContext().SaveChanges();
+                }
+                else
+                {
+                    ContextDB.GetContext().Types.Remove(OldType);
+                    StaticObservableCollections.allType.Remove(OldType);
+                    StaticObservableCollections.allType.Add(type);
+                    ContextDB.GetContext().Types.Add(type);
+                    ContextDB.GetContext().SaveChanges();
+                    OldType = type;
+                }
             }
             else
             {

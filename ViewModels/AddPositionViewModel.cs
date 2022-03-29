@@ -7,7 +7,9 @@ using WPFCoreMVVM_EF.ViewModels.Base;
 using WPFCoreMVVM_EF.Views.Windows;
 using WPFCoreMVVM_EF.Infrastructure.Commands;
 using WPFCoreMVVM_EF.Services.Interfaces;
+using WPFCoreMVVM_EF.Infrastructure.Commands.Base;
 using WPFCoreMVVM_EF.Models;
+using System.Collections.ObjectModel;
 using WPFCoreMVVM_EF.Models.Base;
 using System.Windows.Input;
 using System.Windows;
@@ -21,48 +23,63 @@ namespace WPFCoreMVVM_EF.ViewModels
     {
         private readonly IUserDialog _UserDialog;
         private readonly IDataService _DataService;
-        public string PositionName { get; set; }
 
-        // private AddPositionViewModel _PositionViewModel;
-        public AddPositionViewModel(/*AddPositionViewModel PositionViewModel*/)
+        public AddPositionViewModel()
         {
-           // _PositionViewModel = PositionViewModel;
+            AddNewPosition = new LambdaCommand(OnOpenAddNewPositionExecuted, CanOpenAddNewPositionExecute);
+            NewPosition = new Position();
         }
-        public AddPositionViewModel(string name)
+        public AddPositionViewModel(Position position)
         {
-            PositionName = name;
+            NewPosition = new Position();
+            NewPosition.Name = position.Name;
+            OldPosition = position;
+            AddNewPosition = new LambdaCommand(OnOpenAddNewPositionExecuted, CanOpenAddNewPositionExecute);
+            _isNewPosition = false;
         }
         public AddPositionViewModel(IUserDialog UserDialog, IDataService DataService)
         {
             _UserDialog = UserDialog;
             _DataService = DataService;
         }
-
-        
-
-
-        public ICommand AddNewPosition
+        private bool _isNewPosition = true;
+        public Position NewPosition { get; set; }
+        private Position OldPosition { get; set; }
+        public Command AddNewPosition { get; }
+        /*public ICommand AddNewPosition
         {
             get
             {
                 return new LambdaCommand(OnOpenAddNewPositionExecuted, CanOpenAddNewPositionExecute);
             }
-        }
+        }*/
         private bool CanOpenAddNewPositionExecute(object p) => true;
         private void OnOpenAddNewPositionExecuted(object p)
         {
 
-            bool check = ContextDB.GetContext().Positions.Any(el => el.Name == PositionName ); 
+            bool check = ContextDB.GetContext().Positions.Any(el => el.Name == NewPosition.Name ); 
 
             if (!check)
             {
-                Position position = new Position
+                Position newPosition = new Position
                 {
-                    Name = PositionName,
+                    Name = NewPosition.Name,
                 };
-                ContextDB.GetContext().Positions.Add(position);
-                ContextDB.GetContext().SaveChanges();
-
+                if (_isNewPosition)
+                {
+                    StaticObservableCollections.allPositions.Add(newPosition);
+                    ContextDB.GetContext().Positions.Add(newPosition);
+                    ContextDB.GetContext().SaveChanges();
+                }
+                else
+                {
+                    ContextDB.GetContext().Positions.Remove(OldPosition);
+                    StaticObservableCollections.allPositions.Remove(OldPosition);
+                    StaticObservableCollections.allPositions.Add(newPosition);
+                    ContextDB.GetContext().Positions.Add(newPosition);
+                    ContextDB.GetContext().SaveChanges();
+                    OldPosition = newPosition;
+                }
             } else
             {
                 MessageBox.Show("Данная должность уже имеется в базе данных");

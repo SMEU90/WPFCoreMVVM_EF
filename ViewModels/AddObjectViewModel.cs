@@ -7,6 +7,8 @@ using WPFCoreMVVM_EF.ViewModels.Base;
 using WPFCoreMVVM_EF.Views.Windows;
 using WPFCoreMVVM_EF.Infrastructure.Commands;
 using WPFCoreMVVM_EF.Services.Interfaces;
+using WPFCoreMVVM_EF.Infrastructure.Commands.Base;
+using System.Collections.ObjectModel;
 using WPFCoreMVVM_EF.Models;
 using WPFCoreMVVM_EF.Models.Base;
 using System.Windows.Input;
@@ -22,15 +24,36 @@ namespace WPFCoreMVVM_EF.ViewModels
         private readonly IUserDialog _UserDialog;
         private readonly IDataService _DataService;
         public Models.Object NewObject { get; set; }
-        public Models.Type ObjectType { get; set; }
+        private Models.Object OldObject { get; set; }
+        private bool _isNewObject = true;
         public AddObjectViewModel()
         {
-
+            AddNewPersonal = new LambdaCommand(OnOpenAddNewPersonalExecuted, CanOpenAddNewPersonalExecute);
+            OpenAddNewTypeWnd = new LambdaCommand(OnOpenAddNewPositionWndExecuted, CanOpenAddNewPositionWndExecute);
+            NewObject = new Models.Object();
         }
         public AddObjectViewModel(Models.Object obj)
         {
-            NewObject = obj;
-            ObjectType = NewObject.Type;
+            OldObject = obj;
+            NewObject = new Models.Object();
+            NewObject.Failure_time=obj.Failure_time;
+            NewObject.Real_working_hours=obj.Real_working_hours;
+            NewObject.Tech_working_hours = obj.Real_working_hours;
+            NewObject.Reliability=obj.Reliability;
+            NewObject.Status=obj.Status;
+            NewObject.Humidity=obj.Humidity;
+            NewObject.Tech_humidity=obj.Tech_humidity;
+            NewObject.Airiness=obj.Airiness;
+            NewObject.Heat=obj.Heat;
+            NewObject.Tech_heat=obj.Tech_heat;
+            NewObject.All_working_hours = obj.All_working_hours;
+            NewObject.Note=obj.Note;
+            NewObject.Name=obj.Name;
+            NewObject.Type=obj.Type;
+            AddNewPersonal = new LambdaCommand(OnOpenAddNewPersonalExecuted, CanOpenAddNewPersonalExecute);
+            OpenAddNewTypeWnd = new LambdaCommand(OnOpenAddNewPositionWndExecuted, CanOpenAddNewPositionWndExecute);
+            _isNewObject = false;
+
         }
         public AddObjectViewModel(IUserDialog UserDialog, IDataService DataService)
         {
@@ -38,28 +61,25 @@ namespace WPFCoreMVVM_EF.ViewModels
             _DataService = DataService;
         }
 
-
-        private List<Models.Type> allType = ContextDB.GetContext().Types.ToList();//получение всех должностей
-        public List<Models.Type> AllType
+        public ObservableCollection<Models.Type> AllType
         {
             get
             {
-                return allType;
+                return StaticObservableCollections.allType;
             }
-            private set
+            set
             {
-                allType = value;
-                OnPropertyChanged("AllType");
+                StaticObservableCollections.allType = value;
             }
         }
-
-        public ICommand AddNewPersonal
+        public Command AddNewPersonal { get; }
+        /*public ICommand AddNewPersonal
         {
             get
             {
                 return new LambdaCommand(OnOpenAddNewPersonalExecuted, CanOpenAddNewPersonalExecute);
             }
-        }
+        }*/
         private bool CanOpenAddNewPersonalExecute(object p) => true;
         private void OnOpenAddNewPersonalExecuted(object p)
         {
@@ -78,7 +98,7 @@ namespace WPFCoreMVVM_EF.ViewModels
                                                                   el.All_working_hours == NewObject.All_working_hours &&
                                                                   el.Name == NewObject.Name &&
                                                                   el.Status == NewObject.Status &&
-                                                                  el.Type == ObjectType);
+                                                                  el.Type == NewObject.Type);
             if (!check)
             {
                 Models.Object obj = new Models.Object
@@ -95,13 +115,26 @@ namespace WPFCoreMVVM_EF.ViewModels
                     Note = NewObject.Note,
                     Name = NewObject.Name,
                     Status = NewObject.Status,
-                    Type = ObjectType,
+                    Type = NewObject.Type,
                     ////////////////////////////расчет Критерия надежности!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     Reliability=1,
 
                 };
-                ContextDB.GetContext().Objects.Add(obj);
-                ContextDB.GetContext().SaveChanges();
+                if (_isNewObject)
+                {
+                    StaticObservableCollections.allObject.Add(obj);
+                    ContextDB.GetContext().Objects.Add(obj);
+                    ContextDB.GetContext().SaveChanges();
+                }
+                else
+                {
+                    ContextDB.GetContext().Objects.Remove(OldObject);
+                    StaticObservableCollections.allObject.Remove(OldObject);
+                    StaticObservableCollections.allObject.Add(obj);
+                    ContextDB.GetContext().Objects.Add(obj);
+                    ContextDB.GetContext().SaveChanges();
+                    OldObject = obj;
+                }
             }
             else
             {
@@ -125,20 +158,21 @@ namespace WPFCoreMVVM_EF.ViewModels
             OnPropertyChanged("AllPositions");
         }*/
         //public string ObjcetAddType { get; set; }
-        public ICommand OpenAddNewTypeWnd
+        public Command OpenAddNewTypeWnd { get; }
+        /*public ICommand OpenAddNewTypeWnd
         {
             get
             {
                 return new LambdaCommand(OnOpenAddNewPositionWndExecuted, CanOpenAddNewPositionWndExecute);
             }
-        }
+        }*/
         private bool CanOpenAddNewPositionWndExecute(object p) => true;
         private void OnOpenAddNewPositionWndExecuted(object p)
         {
             AddTypeWnd newTypeWindow = new AddTypeWnd();
             SetCenterPositionAndOpen(newTypeWindow);
-            allType = ContextDB.GetContext().Types.ToList();//получение всех должностей
-            OnPropertyChanged("AllType");
+            /*allType = ContextDB.GetContext().Types.ToList();//получение всех должностей
+            OnPropertyChanged("AllType");*/
         }
 
 

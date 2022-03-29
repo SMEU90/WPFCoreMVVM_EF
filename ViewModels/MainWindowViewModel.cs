@@ -11,6 +11,7 @@ using WPFCoreMVVM_EF.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace WPFCoreMVVM_EF.ViewModels
 {
@@ -83,19 +84,21 @@ namespace WPFCoreMVVM_EF.ViewModels
 
         #region Загрузка из бд
 
-        private List<Position> allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
+        /*private List<Position> allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
         private List<Personal> allPersonal = ContextDB.GetContext().Personals.ToList();//получение всех сотрудников
         private List<Models.Type> allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
         private List<Account> allAccount = ContextDB.GetContext().Accounts.ToList();//получение всех заявок объектов оборудования
-        private List<Models.Object> allObject = ContextDB.GetContext().Objects.ToList();//получение всех объектов оборудования
+        private List<Models.Object> allObject = ContextDB.GetContext().Objects.ToList();//получение всех объектов оборудования*/
 
         #endregion
 
         #region Персонал
 
         #region Свойства привязки к DataGrid
+
+        /////////////////////////public ObservableCollection<Personal> AllPersonalItemsSource = new ObservableCollection<Personal>(ContextDB.GetContext().Personals.ToList());
         public Personal PersonalSelectedItem { get; set; }
-        public List<Personal> AllPersonalItemsSource
+        /*public List<Personal> AllPersonalItemsSource
         {
             get
             {
@@ -106,7 +109,22 @@ namespace WPFCoreMVVM_EF.ViewModels
                 allPersonal = value;
                 OnPropertyChanged("AllPersonalItemsSource");
             }
+        }*/
+
+        public ObservableCollection<Personal> AllPersonalItemsSource
+        {
+            get
+            {
+            return StaticObservableCollections.allPersonal;
+            }
+            set
+            {
+                StaticObservableCollections.allPersonal = value;
+                OnPropertyChanged("AllPersonalItemsSource");
+            }
         }
+        
+
         #endregion
 
         #region Command : OpenAddNewPersonalWnd - открытие окна добавления персонала
@@ -123,8 +141,6 @@ namespace WPFCoreMVVM_EF.ViewModels
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////ApplyBlurEffect(this);
             AddPersonalWnd newPersonalWindow = new AddPersonalWnd();
             SetCenterPositionAndOpen(newPersonalWindow);
-            allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
-            allPersonal = ContextDB.GetContext().Personals.ToList();//получение всех сотрудников
             OnPropertyChanged("AllPersonalItemsSource");
         }
         #endregion
@@ -144,9 +160,8 @@ namespace WPFCoreMVVM_EF.ViewModels
         {
             ContextDB.GetContext().Personals.Remove(PersonalSelectedItem);
             ContextDB.GetContext().SaveChanges();
-            allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
-            allPersonal = ContextDB.GetContext().Personals.ToList();//получение всех сотрудников
-            OnPropertyChanged("AllPersonalItemsSource");
+            StaticObservableCollections.allPersonal.Remove(PersonalSelectedItem);
+            //OnPropertyChanged("AllPersonalItemsSource");
         }
         #endregion
 
@@ -165,9 +180,7 @@ namespace WPFCoreMVVM_EF.ViewModels
         {
             AddPersonalWnd newPersonalWindow = new AddPersonalWnd();
             SetCenterPositionAndOpen(newPersonalWindow, new AddPersonalViewModel(PersonalSelectedItem));
-            allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
-            allPersonal = ContextDB.GetContext().Personals.ToList();//получение всех сотрудников
-            OnPropertyChanged("AllPersonalItemsSource");
+            //OnPropertyChanged("AllPersonalItemsSource");
         }
         #endregion
 
@@ -178,15 +191,15 @@ namespace WPFCoreMVVM_EF.ViewModels
         #region Свойства привязки к DataGrid
 
         public Models.Object ObjectSelectedItem { get; set; }
-        public List<Models.Object> AllObjectItemsSource
+        public ObservableCollection<Models.Object> AllObjectItemsSource
         {
             get
             {
-                return allObject;
+                return StaticObservableCollections.allObject;
             }
             private set
             {
-                allObject = value;
+                StaticObservableCollections.allObject = value;
                 OnPropertyChanged("AllObjectItemsSource");
             }
         }
@@ -208,9 +221,6 @@ namespace WPFCoreMVVM_EF.ViewModels
         {
             AddObjectWnd newObjectWnd = new AddObjectWnd();
             SetCenterPositionAndOpen(newObjectWnd);
-            allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
-            allAccount = ContextDB.GetContext().Accounts.ToList();//получение всех ремонтов объектов оборудования
-            allObject = ContextDB.GetContext().Objects.ToList();//получение всех объектов оборудования
             OnPropertyChanged("AllObjectItemsSource");
         }
         #endregion
@@ -230,9 +240,6 @@ namespace WPFCoreMVVM_EF.ViewModels
         {
             ContextDB.GetContext().Objects.Remove(ObjectSelectedItem);
             ContextDB.GetContext().SaveChanges();
-            allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
-            allAccount = ContextDB.GetContext().Accounts.ToList();//получение всех типов объектов оборудования
-            allObject = ContextDB.GetContext().Objects.ToList();//получение всех объектов оборудования
             OnPropertyChanged("AllObjectItemsSource");
         }
         #endregion
@@ -251,8 +258,6 @@ namespace WPFCoreMVVM_EF.ViewModels
         {
             AddObjectWnd newObjectWnd = new AddObjectWnd();
             SetCenterPositionAndOpen(newObjectWnd, new AddObjectViewModel(ObjectSelectedItem));
-            allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
-            allPersonal = ContextDB.GetContext().Personals.ToList();//получение всех сотрудников
             OnPropertyChanged("AllPersonalItemsSource");
         }
         #endregion
@@ -264,16 +269,16 @@ namespace WPFCoreMVVM_EF.ViewModels
         #region Свойства привязки к DataGrid
 
         public Position PositionSelectedItem { get; set; }
-        public List<Position> AllPostitionItemsSource
+        public ObservableCollection<Position> AllPostitionItemsSource
         {
             get
             {
-                return allPositions;
+                return StaticObservableCollections.allPositions;
             }
             private set
             {
-                allPositions = value;
-                OnPropertyChanged("AllPostitionItemsSource");
+                StaticObservableCollections.allPositions = value;
+                //OnPropertyChanged("AllPostitionItemsSource");
             }
         }
 
@@ -294,8 +299,7 @@ namespace WPFCoreMVVM_EF.ViewModels
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////ApplyBlurEffect(this);
             AddPositionWnd newPositionWindow = new AddPositionWnd();
             SetCenterPositionAndOpen(newPositionWindow);
-            allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
-            OnPropertyChanged("AllPostitionItemsSource");
+            //OnPropertyChanged("AllPostitionItemsSource");
         }
         #endregion
 
@@ -313,8 +317,7 @@ namespace WPFCoreMVVM_EF.ViewModels
         {
             ContextDB.GetContext().Positions.Remove(PositionSelectedItem);
             ContextDB.GetContext().SaveChanges();
-            allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
-            OnPropertyChanged("AllPostitionItemsSource");
+            //OnPropertyChanged("AllPostitionItemsSource");
         }
         #endregion
 
@@ -332,8 +335,7 @@ namespace WPFCoreMVVM_EF.ViewModels
         private void OnEditPositionExecuted(object p)
         {
             AddPositionWnd newPositionWindow = new AddPositionWnd();
-            SetCenterPositionAndOpen(newPositionWindow, new AddPositionViewModel(PositionSelectedItem.Name));
-            allPositions = ContextDB.GetContext().Positions.ToList();//получение всех должностей
+            SetCenterPositionAndOpen(newPositionWindow, new AddPositionViewModel(PositionSelectedItem));
             OnPropertyChanged("AllPostitionItemsSource");
         }
         #endregion
@@ -344,15 +346,15 @@ namespace WPFCoreMVVM_EF.ViewModels
 
         #region Свойства привязки к DataGrid
         public Account AccountSelectedItem { get; set; }
-        public List<Account> AllAccountItemsSource
+        public ObservableCollection<Account> AllAccountItemsSource
         {
             get
             {
-                return allAccount;
+                return StaticObservableCollections.allAccount;
             }
             private set
             {
-                allAccount = value;
+                StaticObservableCollections.allAccount = value;
                 OnPropertyChanged("AllAccountItemsSource");
             }
         }
@@ -379,7 +381,6 @@ namespace WPFCoreMVVM_EF.ViewModels
         {
             ContextDB.GetContext().Accounts.Remove(AccountSelectedItem);
             ContextDB.GetContext().SaveChanges();
-            allAccount = ContextDB.GetContext().Accounts.ToList();//получение всех типов объектов оборудования
             OnPropertyChanged("AllAccountItemsSource");
         }
 
@@ -399,7 +400,6 @@ namespace WPFCoreMVVM_EF.ViewModels
         {
             ContextDB.GetContext().Accounts.Remove(AccountSelectedItem);
             ContextDB.GetContext().SaveChanges();
-            allAccount = ContextDB.GetContext().Accounts.ToList();//получение всех типов объектов оборудования
             OnPropertyChanged("AllAccountItemsSource");
         }
         #endregion
@@ -410,15 +410,15 @@ namespace WPFCoreMVVM_EF.ViewModels
 
         #region Свойства привязки к DataGrid
         public Models.Type TypeSelectedItem { get; set; }
-        public List<Models.Type> AllTypeItemsSource
+        public ObservableCollection<Models.Type> AllTypeItemsSource
         {
             get
             {
-                return allType;
+                return StaticObservableCollections.allType;
             }
             private set
             {
-                allType = value;
+                StaticObservableCollections.allType = value;
                 OnPropertyChanged("AllTypeItemsSource");
             }
         }
@@ -440,7 +440,6 @@ namespace WPFCoreMVVM_EF.ViewModels
         {
             AddTypeWnd newTypeWnd = new AddTypeWnd();
             SetCenterPositionAndOpen(newTypeWnd);
-            allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
             OnPropertyChanged("AllTypeItemsSource");
         }
         #endregion
@@ -460,7 +459,6 @@ namespace WPFCoreMVVM_EF.ViewModels
         {
             ContextDB.GetContext().Types.Remove(TypeSelectedItem);
             ContextDB.GetContext().SaveChanges();
-            allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
             OnPropertyChanged("AllTypeItemsSource");
         }
 
@@ -480,8 +478,7 @@ namespace WPFCoreMVVM_EF.ViewModels
         private void OnEditTypeExecuted(object p)
         {
             AddTypeWnd newTypeWnd = new AddTypeWnd();
-            SetCenterPositionAndOpen(newTypeWnd, new AddTypeViewModel(TypeSelectedItem.Name));
-            allType = ContextDB.GetContext().Types.ToList();//получение всех типов объектов оборудования
+            SetCenterPositionAndOpen(newTypeWnd, new AddTypeViewModel(TypeSelectedItem));
             OnPropertyChanged("AllTypeItemsSource");
         }
         #endregion

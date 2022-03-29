@@ -14,7 +14,7 @@
     </Window.DataContext>-->
     <Grid>
         <StackPanel>
-            <TextBox Margin="30,40,30,0" Text="{Binding PositionName}"
+            <TextBox Margin="30,40,30,0" Text="{Binding NewPosition.Name}"
                              x:Name="txtAge" FontSize="18" 
                              materialDesign:HintAssist.Hint="Должность" 
                              BorderThickness="2" BorderBrush="{DynamicResource MaterialDesignDivider}"  

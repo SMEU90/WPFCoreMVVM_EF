@@ -99,7 +99,7 @@
                               IsReadOnly="False"
                               ItemsSource="{Binding AllType}"
                               DisplayMemberPath="Name"
-                              SelectedItem="{Binding ObjectType}">
+                              SelectedItem="{Binding NewObject.Type}">
             </ComboBox>
 
             <Button  Margin="30,50,30,0" x:Name="AddPersonalBtn" 
