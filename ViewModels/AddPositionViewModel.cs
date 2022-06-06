@@ -17,7 +17,7 @@ using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace WPFCoreMVVM_EF.ViewModels
+namespace WPFCoreMVVM_EF.ViewModels//add validation
 {
     internal class AddPositionViewModel : ViewModel
     {
@@ -26,12 +26,14 @@ namespace WPFCoreMVVM_EF.ViewModels
         public string AddButtonText { get; set; }
         public AddPositionViewModel()
         {
+            _Title = "Добавление должности";
             AddButtonText = "Добавить должность";
             AddNewPosition = new LambdaCommand(OnOpenAddNewPositionExecuted, CanOpenAddNewPositionExecute);
             NewPosition = new Position();
         }
         public AddPositionViewModel(Position position)
         {
+            _Title = "Редактирование должности";
             AddButtonText = "Изменить должность";
             NewPosition = new Position();
             NewPosition.Name = position.Name;
@@ -44,6 +46,15 @@ namespace WPFCoreMVVM_EF.ViewModels
             _UserDialog = UserDialog;
             _DataService = DataService;
         }
+        #region Title : string - Заголовок окна
+
+        /// <summary>Заголовок окна</summary>
+        private string _Title = "";
+
+        /// <summary>Заголовок окна</summary>
+        public string Title { get => _Title; set => Set(ref _Title, value); }
+
+        #endregion
         private bool _isNewPosition = true;
         public Position NewPosition { get; set; }
         private Position OldPosition { get; set; }

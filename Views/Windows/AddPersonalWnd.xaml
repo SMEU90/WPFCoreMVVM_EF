@@ -8,7 +8,8 @@
         xmlns:local="clr-namespace:WPFCoreMVVM_EF.Views.Windows"
         mc:Ignorable="d"
         x:Name="MainWindowWnd"
-        Title="AddPersonal" Height="750" Width="800">
+        Title="{Binding Title}" 
+        Height="750" Width="800">
     <!--<Window.DataContext>
         <vm:AddPersonalViewModel/>
     </Window.DataContext>-->

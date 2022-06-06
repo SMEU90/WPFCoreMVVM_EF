@@ -7,7 +7,8 @@
         mc:Ignorable="d"
         xmlns:vm="clr-namespace:WPFCoreMVVM_EF.ViewModels"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="AddTypeWnd" Height="300" Width="550">
+        Title="{Binding Title}" 
+        Height="300" Width="550">
     <!--<Window.DataContext>
         <vm:AddTypeViewModel/>
     </Window.DataContext>-->

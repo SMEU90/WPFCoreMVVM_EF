@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Collections.ObjectModel;
 
-namespace WPFCoreMVVM_EF.ViewModels
+namespace WPFCoreMVVM_EF.ViewModels//add validation
 {
     internal class MainWindowViewModel : ViewModel
     {

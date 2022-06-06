@@ -17,7 +17,7 @@ using System.Windows.Media;
 using System.Collections.ObjectModel;
 using WPFCoreMVVM_EF.Infrastructure.Commands.Base;
 
-namespace WPFCoreMVVM_EF.ViewModels//Not ready
+namespace WPFCoreMVVM_EF.ViewModels//Not ready now
 {
     internal class AddACcountViewModel : ViewModel
     {

@@ -17,7 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 
 
-namespace WPFCoreMVVM_EF.ViewModels
+namespace WPFCoreMVVM_EF.ViewModels//add validation
 {
     internal class AddTypeViewModel : ViewModel
     {
@@ -30,12 +30,14 @@ namespace WPFCoreMVVM_EF.ViewModels
 
         public AddTypeViewModel()
         {
+            _Title = "Добавлене вида оборудования";
             AddButtonText = "Добавить";
             AddNewType = new LambdaCommand(OnOpenAddNewPositionExecuted, CanOpenAddNewPositionExecute);
             NewType = new Models.Type();
         }
         public AddTypeViewModel(Models.Type type)
         {
+            _Title = "Редактирование вида оборудования";
             AddButtonText = "Изменить";
             AddNewType = new LambdaCommand(OnOpenAddNewPositionExecuted, CanOpenAddNewPositionExecute);
             NewType = new Models.Type();
@@ -48,6 +50,15 @@ namespace WPFCoreMVVM_EF.ViewModels
             _UserDialog = UserDialog;
             _DataService = DataService;
         }
+        #region Title : string - Заголовок окна
+
+        /// <summary>Заголовок окна</summary>
+        private string _Title = "";
+
+        /// <summary>Заголовок окна</summary>
+        public string Title { get => _Title; set => Set(ref _Title, value); }
+
+        #endregion
         public Command AddNewType { get; }
         private bool CanOpenAddNewPositionExecute(object p) => true;
         private void OnOpenAddNewPositionExecuted(object p)

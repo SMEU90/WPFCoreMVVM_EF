@@ -18,7 +18,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Collections.ObjectModel;
 
-namespace WPFCoreMVVM_EF.ViewModels
+namespace WPFCoreMVVM_EF.ViewModels//add validation
 {
     internal class AddPersonalViewModel : ViewModel
     {
@@ -27,6 +27,7 @@ namespace WPFCoreMVVM_EF.ViewModels
         public string AddButtonText { get; set; }
         public AddPersonalViewModel()
         {
+            _Title = "Добавление сотрудника";
             AddButtonText = "Добавить сотрудника";
             AddNewPersonal = new LambdaCommand(OnOpenAddNewPersonalExecuted, CanOpenAddNewPersonalExecute);
             OpenAddNewPositionWnd = new LambdaCommand(OnOpenAddNewPositionWndExecuted, CanOpenAddNewPositionWndExecute);
@@ -35,6 +36,7 @@ namespace WPFCoreMVVM_EF.ViewModels
         }
         public AddPersonalViewModel(Personal personal)
         {
+            _Title = "Редактирование сотрудника";
             AddButtonText = "Изменить сотрудника";
             NewPersonal = new Personal();
             NewPersonal.Age=personal.Age;
@@ -58,6 +60,16 @@ namespace WPFCoreMVVM_EF.ViewModels
         public Personal NewPersonal { get; set; }
         private Personal OldPersonal { get; set; }
         private bool _isNewPersonal=true;
+
+        #region Title : string - Заголовок окна
+
+        /// <summary>Заголовок окна</summary>
+        private string _Title = "";
+
+        /// <summary>Заголовок окна</summary>
+        public string Title { get => _Title; set => Set(ref _Title, value); }
+
+        #endregion
         public ObservableCollection<Position> AllPosition
         {
             get

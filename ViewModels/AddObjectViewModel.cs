@@ -17,7 +17,7 @@ using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace WPFCoreMVVM_EF.ViewModels
+namespace WPFCoreMVVM_EF.ViewModels//add validation
 {
     internal class AddObjectViewModel : ViewModel
     {
